@@ -1,0 +1,71 @@
+Configs: {
+	AutoWhipConfig: {
+		DisplayName: 自动切鞭配置
+		WhipBuffPairs.Tooltip: ""
+	}
+
+	WhipBuffPair: {
+		Tooltip: ""
+		WhipItemID.Tooltip: ""
+		BuffID.Tooltip: ""
+	}
+}
+
+AutoWhipConfig: {
+	EnableAutoSwitch: {
+		Label: 启用自动切换副鞭
+		Tooltip: 当你没有鞭子 Buff 时，自动切换副鞭使用
+	}
+
+	WhipBuffPairs: {
+		Label: 副鞭配置列表
+		Tooltip: ""
+	}
+
+	LogEnabled: {
+		Label: 显示日志提示
+		Tooltip: 开启后将在聊天框显示主鞭与副鞭切换提示，推荐关闭，开发者使用
+	}
+
+	UseBuffTimeThreshold: {
+		Label: 启用 Buff 时间阈值判断
+		Tooltip: Buff 剩余时间低于下方设定值时，判定为“Buff 不足”并切换副鞭；若 Buff 已消失同样视为不足
+	}
+
+	BuffTimeThreshold: {
+		Label: Buff 时间阈值（帧）
+		Tooltip: 若 Buff 剩余时间少于该值将触发切鞭（60 帧 = 1 秒）
+	}
+
+	MainWhips: {
+		Label: 主鞭配置列表
+		Tooltip: 设置将被自动轮换使用的主鞭
+	}
+
+	MainWhipDuration: {
+		Label: 主鞭使用时长（帧）
+		Tooltip: 每条主鞭使用的帧数（1秒 = 60帧）
+	}
+}
+
+WhipBuffPair: {
+	WhipItemID: {
+		Label: 副鞭物品ID
+		Tooltip: 会被自动使用的副鞭（需提供 Buff）
+	}
+
+	BuffID: {
+		Label: 对应的Buff ID
+		Tooltip: 此 Buff 用于判断是否需要自动切换
+	}
+}
+
+SwitchToSubWhip: 缺失 Buff，切至副鞭：
+SwitchToMainWhip: Buff 齐全，切至主鞭：
+RestoreInitialWeapon: 攻击结束，恢复初始武器
+Keybinds.ToggleSwitch.DisplayName: 开/关自动切鞭
+
+SwitchToggle: {
+	On: 切鞭功能已开启
+	Off: 切鞭功能已关闭
+}

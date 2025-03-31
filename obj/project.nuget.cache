@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "GXP0MCHNlZ4=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\user\\OneDrive - Macquarie University\\文档\\My Games\\Terraria\\tModLoader\\ModSources\\auto_whipstacking\\auto_whipstacking.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\user\\.nuget\\packages\\tmodloader.codeassist\\0.1.5\\tmodloader.codeassist.0.1.5.nupkg.sha512"
+  ],
+  "logs": []
+}

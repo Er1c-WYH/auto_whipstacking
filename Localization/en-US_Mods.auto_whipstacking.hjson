@@ -1,0 +1,71 @@
+Configs: {
+	AutoWhipConfig: {
+		DisplayName: Auto Whip Config
+		WhipBuffPairs.Tooltip: ""
+	}
+
+	WhipBuffPair: {
+		Tooltip: ""
+		WhipItemID.Tooltip: ""
+		BuffID.Tooltip: ""
+	}
+}
+
+AutoWhipConfig: {
+	EnableAutoSwitch: {
+		Label: Enable Auto Switch
+		Tooltip: Automatically switch to sub whip when whip buff is missing
+	}
+
+	WhipBuffPairs: {
+		Label: Sub Whip Configuration List
+		Tooltip: ""
+	}
+
+	LogEnabled: {
+		Label: Enable Log Messages
+		Tooltip: Display switch messages in the chat. Recommended to disable unless debugging
+	}
+
+	UseBuffTimeThreshold: {
+		Label: Enable Buff Time Threshold
+		Tooltip: When enabled, if a whip's buff has less time remaining than the threshold (or is missing), it will trigger sub-whip switching
+	}
+
+	BuffTimeThreshold: {
+		Label: Buff Time Threshold (in frames)
+		Tooltip: If the remaining duration of the buff is lower than this value, switching will trigger (60 frames = 1 second)
+	}
+
+	MainWhips: {
+		Label: Main Whip Configuration List
+		Tooltip: Set the main whips to cycle through when all buffs are active
+	}
+
+	MainWhipDuration: {
+		Label: Main Whip Duration (frames)
+		Tooltip: Duration for each main whip to be used before switching (60 frames = 1 second)
+	}
+}
+
+WhipBuffPair: {
+	WhipItemID: {
+		Label: Sub Whip Item ID
+		Tooltip: Whip to use when the corresponding buff is missing
+	}
+
+	BuffID: {
+		Label: Corresponding Buff ID
+		Tooltip: The buff this whip provides, used to determine switching logic
+	}
+}
+
+SwitchToSubWhip: Missing buff, switched to sub whip:
+SwitchToMainWhip: All buffs present, switched back to main whip:
+RestoreInitialWeapon: Attack ended, restoring initial weapon
+Keybinds.ToggleSwitch.DisplayName: Toggle Auto Whip
+
+SwitchToggle: {
+	On: Auto switching is ON
+	Off: Auto switching is OFF
+}

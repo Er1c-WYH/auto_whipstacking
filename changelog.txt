@@ -1,0 +1,39 @@
+Version 1.0.0 has been published to Stable tModLoader v2025.1
+
+🛠️ 修复：
+
+修复当玩家未手持主/副鞭时仍能触发自动切鞭逻辑的问题
+
+修复副鞭切换后偶发的“以异常速度连续攻击”的 Bug（即“闪现攻击”问题）
+
+✅ 改进：
+
+现在只有玩家起手持有主鞭或副鞭时，才会启动切鞭逻辑，避免误触发
+
+为切鞭操作添加了冷却时间，防止频繁触发造成异常行为
+
+💡 说明：
+
+主鞭轮换、副鞭 Buff 检测与切换功能均不受影响
+
+自动切鞭系统现在更稳定、行为更符合预期
+
+--------------------------------
+
+🛠️ Fixes:
+
+Fixed an issue where whip switching could still trigger even when the player wasn’t holding a configured whip
+
+Fixed a rare bug where weapon switching could cause rapid or glitched attack animations ("blinking attacks")
+
+✅ Improvements:
+
+Auto-switching logic now only activates when the player begins attacking with a configured main or sub whip
+
+Added cooldown to weapon switching to prevent rapid or unintended whip changes
+
+💡 Notes:
+
+Main whip rotation and sub whip buff detection still work as intended
+
+The system is now more stable and predictable during combat
