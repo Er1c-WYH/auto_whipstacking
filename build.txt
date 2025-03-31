@@ -1,4 +1,4 @@
 displayName = Auto Whipstacking（自动切鞭）
 author = jilijili
-version = 1.0.0
+version = 1.0.1
 side = Client
