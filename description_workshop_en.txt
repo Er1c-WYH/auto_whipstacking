@@ -1,0 +1,33 @@
+[img]https://i.imgur.com/W2c5CX6.gif[/img]
+
+[h1]Auto Whipstacking[/h1]
+
+A quality-of-life mod designed for summoners — or any player who uses weapons that apply buffs to themselves. Automatically switch between a main weapon and a sub weapon based on buff status to streamline combat flow and maximize damage uptime.
+
+⚠️ Note: Buffs in this mod refer specifically to [b]buffs applied to the player by weapons[/b], such as the [b]attack speed buff from certain whips (e.g. Holy Blessing)[/b].
+
+[h2]✨ Features[/h2]
+[list]
+[*] Automatically switches to the assigned sub weapon when specific buff(s) are missing
+[*] Automatically switches back to the main weapon once all buffs are present
+[*] Supports rotating through multiple main weapons (using a shared configurable duration)
+[*] While designed with whips in mind, [b]any weapon[/b] can be used as a main or sub weapon
+[*] Includes a visual configuration UI for assigning main weapons, sub weapon–buff pairs, and more
+[*] Localization and debug logging toggle supported
+[/list]
+
+[h2]🛠 How to Use[/h2]
+[list]
+[*] On first use, open the mod configuration panel:
+  - Set your main weapon(s)
+  - Set sub weapons and their associated buffs
+[*] You can enable/disable auto switching via a custom hotkey in Controls
+[*] In combat: if a configured buff is missing, the system will switch to the sub weapon
+[*] When the buff returns, it will switch back to the main weapon
+[*] Holding the main weapon will trigger main weapon rotation (all share one timer)
+[/list]
+
+[h2]🌍 Want to contribute a translation?[/h2]
+You're welcome to help! Visit the GitHub repository to submit localization files.  
+👉 [url=https://github.com/Er1c-WYH/auto_whipstacking]GitHub Source Repository[/url]
+

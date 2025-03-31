@@ -1,33 +1,32 @@
 [img]https://i.imgur.com/W2c5CX6.gif[/img]
 
-[h1]Auto Whipstacking[/h1]
+[h1]Auto Whipstacking 自动切鞭模组[/h1]
 
-A quality-of-life mod designed for summoners — or any player who uses weapons that apply buffs to themselves. Automatically switch between a main weapon and a sub weapon based on buff status to streamline combat flow and maximize damage uptime.
+一个为召唤师，或依赖武器 Buff 的玩家量身打造的实用模组：根据 Buff 状态自动切换主/副武器，让你的攻击逻辑更加智能高效，最大化输出效率。
 
-⚠️ Note: Buffs in this mod refer specifically to [b]buffs applied to the player by weapons[/b], such as the [b]attack speed buff from certain whips (e.g. Holy Blessing)[/b].
+⚠️ 注意：本模组所说的 Buff，指的是**武器对玩家自身提供的 Buff**，例如部分鞭子施加的 [b]攻击速度提升 Buff（如神圣祝福）[/b]。
 
-[h2]✨ Features[/h2]
+[h2]✨ 功能特色[/h2]
 [list]
-[*] Automatically switches to the assigned sub weapon when specific buff(s) are missing
-[*] Automatically switches back to the main weapon once all buffs are present
-[*] Supports rotating through multiple main weapons (using a shared configurable duration)
-[*] While designed with whips in mind, [b]any weapon[/b] can be used as a main or sub weapon
-[*] Includes a visual configuration UI for assigning main weapons, sub weapon–buff pairs, and more
-[*] Localization and debug logging toggle supported
+[*] 缺少 Buff 时自动切换为对应副武器
+[*] Buff 齐全后自动切回主武器
+[*] 支持多个主武器轮换（共用一个可配置的轮换时间）
+[*] 虽然主要面向鞭类武器，但 [b]任何武器[/b] 都可以作为主/副武器参与切换
+[*] 自带图形化配置界面，可绑定主武器，配置副武器与其对应的 Buff
+[*] 支持多语言与调试日志输出（可选）
 [/list]
 
-[h2]🛠 How to Use[/h2]
+[h2]🛠 使用方法[/h2]
 [list]
-[*] On first use, open the mod configuration panel:
-  - Set your main weapon(s)
-  - Set sub weapons and their associated buffs
-[*] You can enable/disable auto switching via a custom hotkey in Controls
-[*] In combat: if a configured buff is missing, the system will switch to the sub weapon
-[*] When the buff returns, it will switch back to the main weapon
-[*] Holding the main weapon will trigger main weapon rotation (all share one timer)
+[*] 首次使用时请先进入模组配置界面：
+  - 设置主武器（可多选）
+  - 设置副武器与对应 Buff 的关系
+[*] 若需要手动启用/关闭自动切鞭，可在控件设置中绑定快捷键
+[*] 实战中：缺少 Buff 时自动切副武器，获得 Buff 后自动切回主武器
+[*] 持续使用主武器会触发主武器轮换（共用计时器）
 [/list]
 
-[h2]🌍 Want to contribute a translation?[/h2]
-You're welcome to help! Visit the GitHub repository to submit localization files.  
-👉 [url=https://github.com/Er1c-WYH/auto_whipstacking]GitHub Source Repository[/url]
+[h2]🌍 想要贡献翻译？[/h2]
+欢迎访问 GitHub 仓库提交本地化内容！  
+👉 [url=https://github.com/Er1c-WYH/auto_whipstacking]GitHub 源码仓库[/url]
 
