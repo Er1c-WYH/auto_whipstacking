@@ -1,0 +1,19 @@
+# === tModLoader build output ===
+*.tmod
+*.dll
+*.pdb
+*.cache
+*.tmp
+
+# Build directories
+bin/
+obj/
+
+# User/IDE config
+.vscode/
+*.user
+*.suo
+
+# OS-specific
+.DS_Store
+Thumbs.db
