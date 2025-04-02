@@ -18,7 +18,7 @@ namespace auto_whipstacking
 
         [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.UseBuffTimeThreshold.Label")]
         [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.UseBuffTimeThreshold.Tooltip")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool UseBuffTimeThreshold;
 
         [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.BuffTimeThreshold.Label")]
@@ -87,7 +87,7 @@ namespace auto_whipstacking
 
         [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.LogEnabled.Label")]
         [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.LogEnabled.Tooltip")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool LogEnabled;
     }
 
