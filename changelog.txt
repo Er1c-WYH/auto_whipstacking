@@ -1,9 +1,35 @@
-Version 1.0.1 has been published to Stable tModLoader v2025.1
+Version 2.0.0 has been published to Stable tModLoader v2025.2
 
-🖼 更新模组图标  
-将模组图标从原本的 512x512 缩小为 80x80，以优化在创意工坊与游戏内模组浏览器中的显示效果。
+🧩 新增功能
 
--------------------------------
+支持 Debuff 武器系统：可为任意武器设置冷却间隔，战斗中将自动施加 Debuff
 
-🖼 Updated mod icon  
-The icon has been resized from 512x512 to 80x80 to improve visual appearance in the Steam Workshop and in-game Mod Browser.
+引入切换优先级逻辑：Debuff > 副武器（补 Buff）> 主武器轮换
+
+新增默认配置：初次安装即可使用，无需手动填写武器列表
+
+🔧 说明
+
+主鞭轮换、副鞭 Buff 检测与切换功能均保持不变
+
+Debuff 武器切换仅在战斗中执行，不干扰背包或日常操作
+
+系统逻辑更加稳定，配置体验更加友好
+
+-------------------------------------------------
+
+🧩 New Features
+
+Debuff weapon system added: Configure cooldowns individually, used automatically in combat
+
+Switching priority introduced: Debuff > Sub weapon (buff missing) > Main weapon rotation
+
+Default configuration added: Use the mod immediately after installation
+
+🔧 Notes
+
+Main whip rotation and sub weapon switching remain unchanged
+
+Debuff logic only runs during active combat
+
+Switching behavior is now more reliable and easier to configure
