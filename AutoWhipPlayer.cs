@@ -76,6 +76,32 @@ namespace auto_whipstacking
                 return; // 玩家未攻击，不处理任何切换
             }
 
+            var heldItem = Player.HeldItem;
+            if (heldItem == null || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
+                return;
+
+            bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
+            bool isSubWhip = config.WhipBuffPairs.Any(p => p.WhipItem.Type == heldItem.type);
+
+            if (!wasAttackingLastFrame)
+            {
+                wasAttackingLastFrame = true;
+                initialWeaponType = heldItem.type;
+
+                if (!isMainWhip && !isSubWhip)
+                {
+                    wasAttackingLastFrame = false;
+                    return;
+                }
+
+                mainWhipTimer = 0;
+                UpdateCurrentMainWhips(config);
+            }
+            else if (!isInSubWhipState)
+            {
+                mainWhipTimer++;
+            }
+
             // 攻击中，更新计时器
             foreach (var key in debuffWeaponTimers.Keys.ToList())
             {
@@ -83,30 +109,33 @@ namespace auto_whipstacking
                     debuffWeaponTimers[key]++;
             }
 
-            // 检查哪些 debuff 武器恰好达到冷却时间（只触发一次）
-            var readyList = config.DebuffWeapons
-                .Where(d =>
-                    Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type) &&
-                    debuffWeaponTimers.TryGetValue(d.Weapon.Type, out int t) &&
-                    t >= d.Interval * 60)
-                .OrderByDescending(d => Player.inventory.First(i => i.type == d.Weapon.Type).damage)
-                .ToList();
-
-            if (readyList.Count > 0)
+            // 仅当当前手持主/副武器时，才触发 Debuff 武器切换
+            if (isMainWhip || isSubWhip)
             {
-                var selected = readyList[0];
-                int index = FindItemIndex(selected.Weapon.Type);
-                if (index >= 0)
-                {
-                    returnWeaponType = Player.HeldItem.type;
-                    Player.selectedItem = index;
-                    Player.SetDummyItemTime(1);
-                    isInDebuffState = true;
-                    debuffWeaponTimers[selected.Weapon.Type] = 0;
+                var readyList = config.DebuffWeapons
+                    .Where(d =>
+                        Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type) &&
+                        debuffWeaponTimers.TryGetValue(d.Weapon.Type, out int t) &&
+                        t >= d.Interval * 60)
+                    .OrderByDescending(d => Player.inventory.First(i => i.type == d.Weapon.Type).damage)
+                    .ToList();
 
-                    if (config.LogEnabled)
-                        Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToDebuffWeapon") + Player.inventory[index].Name);
-                    return;
+                if (readyList.Count > 0)
+                {
+                    var selected = readyList[0];
+                    int index = FindItemIndex(selected.Weapon.Type);
+                    if (index >= 0)
+                    {
+                        returnWeaponType = Player.HeldItem.type;
+                        Player.selectedItem = index;
+                        Player.SetDummyItemTime(1);
+                        isInDebuffState = true;
+                        debuffWeaponTimers[selected.Weapon.Type] = 0;
+
+                        if (config.LogEnabled)
+                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToDebuffWeapon") + Player.inventory[index].Name);
+                        return;
+                    }
                 }
             }
 
@@ -120,31 +149,6 @@ namespace auto_whipstacking
             {
                 switchCooldown--;
                 return;
-            }
-
-            var heldItem = Player.HeldItem;
-            if (heldItem == null || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
-                return;
-
-            if (!wasAttackingLastFrame)
-            {
-                wasAttackingLastFrame = true;
-                initialWeaponType = heldItem.type;
-
-                bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
-                bool isSubWhip = config.WhipBuffPairs.Any(p => p.WhipItem.Type == heldItem.type);
-                if (!isMainWhip && !isSubWhip)
-                {
-                    wasAttackingLastFrame = false;
-                    return;
-                }
-
-                mainWhipTimer = 0;
-                UpdateCurrentMainWhips(config);
-            }
-            else if (!isInSubWhipState)
-            {
-                mainWhipTimer++;
             }
 
             var missingBuffs = GetMissingBuffPairs(config);
