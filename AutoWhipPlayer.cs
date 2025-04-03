@@ -30,6 +30,9 @@ namespace auto_whipstacking
         {
             var config = ModContent.GetInstance<AutoWhipConfig>();
 
+            if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
+                return;
+
             bool isAttacking = Main.mouseLeft && Main.hasFocus;
 
             // 初始化计时器（按需）

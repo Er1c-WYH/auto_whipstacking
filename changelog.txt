@@ -1,15 +1,11 @@
-Version 2.0.1 has been published to Stable tModLoader v2025.2
+Version 2.0.2 has been published to Stable tModLoader v2025.2
 
-修复与优化：
-
-🛠 修复：Debuff 武器切换现在只会在手持主武器或副武器时触发，避免不必要的切换
-
-✅ 优化：进一步增强武器切换逻辑稳定性，战斗体验更流畅
+✅ 修复：切鞭功能总开关未生效的问题 —— 当关闭“自动切鞭”配置项时，仍会执行主/副鞭切换或 debuff 武器逻辑
+✅ 修复：当开启快捷键禁用（SwitchingEnabled）时，仍会触发自动切鞭逻辑的问题
+✅ 优化：统一开关判断位置，避免局部逻辑遗漏，确保逻辑清晰、行为可控
 
 -----------------------------------------------
 
-Fixes & Improvements:
-
-🛠 Fix: Debuff weapon switching now only triggers when holding a main or sub weapon
-
-✅ Improvement: More stable weapon switching logic for smoother combat
+✅ Fix: Global "Auto Switch" toggle now fully disables all auto-switching behavior, including subwhip and debuff weapons
+✅ Fix: Disabling via hotkey (SwitchingEnabled) now properly halts all switch logic
+✅ Improvement: Centralized toggle logic check for more predictable behavior and cleaner control
