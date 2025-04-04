@@ -1,4 +1,4 @@
-// AutoWhipPlayer.cs - 主/副武器 + Debuff 武器完整自动切换逻辑（仅攻击状态触发）
+// AutoWhipPlayer.cs - 修复背包开启、卸载模组失效，以及 debuff 武器多次攻击问题
 
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +25,8 @@ namespace auto_whipstacking
         private Dictionary<int, int> debuffWeaponTimers = new();
         private bool isInDebuffState = false;
         private int returnWeaponType = -1;
+        private int lastMainWhipType = -1;
+        private int savedMainWhipTimer = 0;
 
         public override void PostUpdate()
         {
@@ -35,22 +37,37 @@ namespace auto_whipstacking
 
             bool isAttacking = Main.mouseLeft && Main.hasFocus;
 
-            // 初始化计时器（按需）
-            if (debuffWeaponTimers.Count != config.DebuffWeapons.Count)
+            // 玩家打开背包时，禁用所有自动切换
+            if (Main.playerInventory)
+            {
+                wasAttackingLastFrame = false;
+                return;
+            }
+
+            // 初始化合法的 debuff 武器
+            var validDebuffWeapons = config.DebuffWeapons
+                .Where(d => d.Weapon.Type > 0 &&
+                            Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
+                .ToList();
+
+            if (debuffWeaponTimers.Count != validDebuffWeapons.Count)
             {
                 debuffWeaponTimers.Clear();
-                foreach (var debuff in config.DebuffWeapons)
+                foreach (var debuff in validDebuffWeapons)
                 {
                     debuffWeaponTimers[debuff.Weapon.Type] = 0;
                 }
             }
 
-            if (!isAttacking)
+            // 处理 debuff 武器状态：攻击完成后立刻切回
+            if (isInDebuffState)
             {
-                if (isInDebuffState)
+                if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                 {
                     isInDebuffState = false;
-                    int index = FindItemIndex(returnWeaponType);
+                    mainWhipTimer = savedMainWhipTimer;
+
+                    int index = FindItemIndex(lastMainWhipType >= 0 ? lastMainWhipType : returnWeaponType);
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
@@ -61,7 +78,11 @@ namespace auto_whipstacking
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreAfterDebuffWeapon") + Player.inventory[index].Name);
                     }
                 }
+                return; // 不执行后续逻辑
+            }
 
+            if (!isAttacking)
+            {
                 if (wasAttackingLastFrame && initialWeaponType != -1 && Player.HeldItem.type != initialWeaponType)
                 {
                     int index = FindItemIndex(initialWeaponType);
@@ -114,12 +135,15 @@ namespace auto_whipstacking
 
             if (isMainWhip || isSubWhip)
             {
-                var readyList = config.DebuffWeapons
+                var readyList = validDebuffWeapons
                     .Where(d =>
-                        Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type) &&
                         debuffWeaponTimers.TryGetValue(d.Weapon.Type, out int t) &&
                         t >= d.Interval * 60)
-                    .OrderByDescending(d => Player.inventory.First(i => i.type == d.Weapon.Type).damage)
+                    .OrderByDescending(d =>
+                    {
+                        var item = Player.inventory.FirstOrDefault(i => i.type == d.Weapon.Type);
+                        return item?.damage ?? 0;
+                    })
                     .ToList();
 
                 if (readyList.Count > 0)
@@ -128,12 +152,12 @@ namespace auto_whipstacking
                     int index = FindItemIndex(selected.Weapon.Type);
                     if (index >= 0)
                     {
-                        returnWeaponType = Player.HeldItem.type;
+                        lastMainWhipType = currentMainWhips.Count > 0 ? currentMainWhips[mainWhipIndex].type : heldItem.type;
+                        returnWeaponType = heldItem.type;
+                        savedMainWhipTimer = mainWhipTimer;
+
                         Player.selectedItem = index;
-
-                        // 旧逻辑：立即攻击，无需检测动画状态
                         Player.SetDummyItemTime(1);
-
                         isInDebuffState = true;
                         debuffWeaponTimers[selected.Weapon.Type] = 0;
 
@@ -144,9 +168,6 @@ namespace auto_whipstacking
                     }
                 }
             }
-
-            if (Main.playerInventory || !AutoWhipKeybinds.SwitchingEnabled)
-                return;
 
             if (!config.EnableAutoSwitch || config.MainWhips.Count == 0)
                 return;

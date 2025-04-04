@@ -1,23 +1,19 @@
-Version 2.1.0 has been published to Stable tModLoader v2025.2
+Version 2.2.0 has been published to Stable tModLoader v2025.2
 
 ⚙️ 功能优化：
-✅ 攻击动画判断：现在模组在切换鞭子之前会检查 itemAnimation 和 itemTime，确保当前攻击动作已完成，避免中断鞭子动画。
-
-✅ 输出更加平衡：防止在一段攻击动画内连续切鞭造成的攻击重叠，DPS 表现更加合理稳定。
+✅ Debuff 武器现在仅在完成一次攻击动画后自动切回原始武器，避免连续攻击或停留过长。
 
 🐞 修复内容：
-修复切鞭会打断攻击并造成异常高伤害的问题。
+修复配置中包含已卸载模组的 debuff 武器时，导致整个 debuff 切换逻辑失效的问题。
+修复打开背包时仍会切换到 debuff 武器的问题（主鞭与副鞭原本不受影响）。
+修复在某些情况下主鞭使用时间较长，导致切入 debuff 后停留时间异常的问题。
 
-修复副鞭 Buff 尚未生效时就切回主鞭的问题。
-
---------------------------------------------------------
+-------------------------------------------------
 
 ⚙️ Improvements:
-✅ Attack Animation Awareness: The mod now checks itemAnimation and itemTime before switching whips to ensure the current attack has finished. This prevents interrupting whip animations.
-
-✅ Balanced Output: Prevented whip switching from overlapping multiple attacks in a single animation cycle, resulting in more realistic and balanced DPS.
+✅ Debuff weapons now switch back to the previous weapon immediately after completing one attack animation.
 
 🐞 Bug Fixes:
-Fixed an issue where whip switching could interrupt attacks and cause unintentional high DPS.
-
-Fixed a problem where the mod would return to the main whip too early, before the sub whip’s buff was properly applied.
+Fixed an issue where having unloaded modded debuff weapons in the config would break all debuff switching.
+Fixed an issue where debuff weapons could still switch in while the inventory was open (main and sub whips were not affected).
+Fixed a timing issue where long main whip durations could cause debuff weapons to stay active longer than expected.
