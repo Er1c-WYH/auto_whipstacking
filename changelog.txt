@@ -1,11 +1,23 @@
-Version 2.0.2 has been published to Stable tModLoader v2025.2
+Version 2.1.0 has been published to Stable tModLoader v2025.2
 
-✅ 修复：切鞭功能总开关未生效的问题 —— 当关闭“自动切鞭”配置项时，仍会执行主/副鞭切换或 debuff 武器逻辑
-✅ 修复：当开启快捷键禁用（SwitchingEnabled）时，仍会触发自动切鞭逻辑的问题
-✅ 优化：统一开关判断位置，避免局部逻辑遗漏，确保逻辑清晰、行为可控
+⚙️ 功能优化：
+✅ 攻击动画判断：现在模组在切换鞭子之前会检查 itemAnimation 和 itemTime，确保当前攻击动作已完成，避免中断鞭子动画。
 
------------------------------------------------
+✅ 输出更加平衡：防止在一段攻击动画内连续切鞭造成的攻击重叠，DPS 表现更加合理稳定。
 
-✅ Fix: Global "Auto Switch" toggle now fully disables all auto-switching behavior, including subwhip and debuff weapons
-✅ Fix: Disabling via hotkey (SwitchingEnabled) now properly halts all switch logic
-✅ Improvement: Centralized toggle logic check for more predictable behavior and cleaner control
+🐞 修复内容：
+修复切鞭会打断攻击并造成异常高伤害的问题。
+
+修复副鞭 Buff 尚未生效时就切回主鞭的问题。
+
+--------------------------------------------------------
+
+⚙️ Improvements:
+✅ Attack Animation Awareness: The mod now checks itemAnimation and itemTime before switching whips to ensure the current attack has finished. This prevents interrupting whip animations.
+
+✅ Balanced Output: Prevented whip switching from overlapping multiple attacks in a single animation cycle, resulting in more realistic and balanced DPS.
+
+🐞 Bug Fixes:
+Fixed an issue where whip switching could interrupt attacks and cause unintentional high DPS.
+
+Fixed a problem where the mod would return to the main whip too early, before the sub whip’s buff was properly applied.

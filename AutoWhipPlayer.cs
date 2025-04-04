@@ -47,7 +47,6 @@ namespace auto_whipstacking
 
             if (!isAttacking)
             {
-                // 攻击松开时，处理恢复
                 if (isInDebuffState)
                 {
                     isInDebuffState = false;
@@ -55,7 +54,8 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
+                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreAfterDebuffWeapon") + Player.inventory[index].Name);
@@ -68,7 +68,8 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
+                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
@@ -76,7 +77,7 @@ namespace auto_whipstacking
                 }
 
                 wasAttackingLastFrame = false;
-                return; // 玩家未攻击，不处理任何切换
+                return;
             }
 
             var heldItem = Player.HeldItem;
@@ -105,14 +106,12 @@ namespace auto_whipstacking
                 mainWhipTimer++;
             }
 
-            // 攻击中，更新计时器
             foreach (var key in debuffWeaponTimers.Keys.ToList())
             {
                 if (debuffWeaponTimers[key] < int.MaxValue)
                     debuffWeaponTimers[key]++;
             }
 
-            // 仅当当前手持主/副武器时，才触发 Debuff 武器切换
             if (isMainWhip || isSubWhip)
             {
                 var readyList = config.DebuffWeapons
@@ -131,12 +130,16 @@ namespace auto_whipstacking
                     {
                         returnWeaponType = Player.HeldItem.type;
                         Player.selectedItem = index;
+
+                        // 旧逻辑：立即攻击，无需检测动画状态
                         Player.SetDummyItemTime(1);
+
                         isInDebuffState = true;
                         debuffWeaponTimers[selected.Weapon.Type] = 0;
 
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToDebuffWeapon") + Player.inventory[index].Name);
+
                         return;
                     }
                 }
@@ -168,7 +171,8 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
+                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         isInSubWhipState = true;
                         if (config.LogEnabled)
@@ -187,7 +191,8 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
+                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
@@ -208,7 +213,8 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
+                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + next.Name);
@@ -237,11 +243,9 @@ namespace auto_whipstacking
                 .Where(p => Player.inventory.Any(i => i != null && !i.IsAir && i.type == p.WhipItem.Type))
                 .Where(p =>
                 {
-                    // 如果没有 buff，肯定是缺失
                     if (!Player.HasBuff(p.Buff.Type))
                         return true;
 
-                    // 如果启用了时间阈值判断，则根据剩余时间判断是否“视为缺失”
                     if (config.UseBuffTimeThreshold)
                     {
                         for (int i = 0; i < Player.buffType.Length; i++)
