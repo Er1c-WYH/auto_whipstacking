@@ -9,24 +9,31 @@ namespace auto_whipstacking
     {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.EnableAutoSwitch.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.EnableAutoSwitch.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.EnableAutoSwitch.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.EnableAutoSwitch.Tooltip")]
         [DefaultValue(true)]
-        public bool EnableAutoSwitch;
+        public bool EnableAutoSwitch { get; set; } // 总开关
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.UseBuffTimeThreshold.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.UseBuffTimeThreshold.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.LogEnabled.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.LogEnabled.Tooltip")]
         [DefaultValue(false)]
-        public bool UseBuffTimeThreshold;
+        public bool LogEnabled { get; set; } // 日志开关
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.BuffTimeThreshold.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.BuffTimeThreshold.Tooltip")]
-        [Range(1, 600)]
-        [DefaultValue(30)]
-        public int BuffTimeThreshold;
+        [Header("$Mods.auto_whipstacking.Config.Headers.MainWhips")] // 主鞭头部
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.MainWhips.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.MainWhips.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.EnableMainWhip.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.EnableMainWhip.Tooltip")]
+        [DefaultValue(true)]
+        public bool EnableMainWhip { get; set; } // 主鞭开关
+
+        [LabelKey("$Mods.auto_whipstacking.Config.MainWhipDuration.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.MainWhipDuration.Tooltip")]
+        [DefaultValue(60)]
+        [Range(1, 300)]
+        public int MainWhipDuration { get; set; } // 主鞭使用时长
+
+        [LabelKey("$Mods.auto_whipstacking.Config.MainWhips.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.MainWhips.Tooltip")]
         public List<ItemDefinition> MainWhips { get; set; } = new()
         {
             new(ItemID.BlandWhip),
@@ -40,14 +47,26 @@ namespace auto_whipstacking
             new(ItemID.RainbowWhip),
         };
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.MainWhipDuration.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.MainWhipDuration.Tooltip")]
-        [DefaultValue(60)]
-        [Range(1, 300)]
-        public int MainWhipDuration;
+        [Header("$Mods.auto_whipstacking.Config.Headers.SubWhips")] // 副鞭头部
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.WhipBuffPairs.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.WhipBuffPairs.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.EnableSubWhip.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.EnableSubWhip.Tooltip")]
+        [DefaultValue(true)]
+        public bool EnableSubWhip { get; set; } // 副鞭开关
+
+        [LabelKey("$Mods.auto_whipstacking.Config.UseBuffTimeThreshold.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.UseBuffTimeThreshold.Tooltip")]
+        [DefaultValue(false)]
+        public bool UseBuffTimeThreshold { get; set; } // 启用buff时间阈值判断
+
+        [LabelKey("$Mods.auto_whipstacking.Config.BuffTimeThreshold.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.BuffTimeThreshold.Tooltip")]
+        [Range(1, 600)]
+        [DefaultValue(30)]
+        public int BuffTimeThreshold { get; set; } // buff时间阈值
+
+        [LabelKey("$Mods.auto_whipstacking.Config.WhipBuffPairs.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.WhipBuffPairs.Tooltip")]
         public List<WhipBuffPair> WhipBuffPairs { get; set; } = new()
         {
             new()
@@ -72,8 +91,15 @@ namespace auto_whipstacking
             },
         };
 
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.DebuffWeapons.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.DebuffWeapons.Tooltip")]
+        [Header("$Mods.auto_whipstacking.Config.Headers.DebuffWeapons")] // debuff武器头部
+
+        [LabelKey("$Mods.auto_whipstacking.Config.EnableDebuffWeapon.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.EnableDebuffWeapon.Tooltip")]
+        [DefaultValue(true)]
+        public bool EnableDebuffWeapon { get; set; } // debuff武器开关
+
+        [LabelKey("$Mods.auto_whipstacking.Config.DebuffWeapons.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.DebuffWeapons.Tooltip")]
         public List<DebuffWeaponConfig> DebuffWeapons { get; set; } = new()
         {
             new()
@@ -82,32 +108,27 @@ namespace auto_whipstacking
                 Interval = 8
             },
         };
-
-        [LabelKey("$Mods.auto_whipstacking.AutoWhipConfig.LogEnabled.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.AutoWhipConfig.LogEnabled.Tooltip")]
-        [DefaultValue(false)]
-        public bool LogEnabled;
     }
 
     public class WhipBuffPair
     {
-        [LabelKey("$Mods.auto_whipstacking.WhipBuffPair.WhipItemID.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.WhipBuffPair.WhipItemID.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.WhipBuffPair.WhipItem.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.WhipBuffPair.WhipItem.Tooltip")]
         public ItemDefinition WhipItem;
 
-        [LabelKey("$Mods.auto_whipstacking.WhipBuffPair.BuffID.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.WhipBuffPair.BuffID.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.WhipBuffPair.Buff.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.WhipBuffPair.Buff.Tooltip")]
         public BuffDefinition Buff;
     }
 
     public class DebuffWeaponConfig
     {
-        [LabelKey("$Mods.auto_whipstacking.DebuffWeaponConfig.Weapon.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.DebuffWeaponConfig.Weapon.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.DebuffWeapon.Weapon.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.DebuffWeapon.Weapon.Tooltip")]
         public ItemDefinition Weapon;
 
-        [LabelKey("$Mods.auto_whipstacking.DebuffWeaponConfig.Interval.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.DebuffWeaponConfig.Interval.Tooltip")]
+        [LabelKey("$Mods.auto_whipstacking.Config.DebuffWeapon.Interval.Label")]
+        [TooltipKey("$Mods.auto_whipstacking.Config.DebuffWeapon.Interval.Tooltip")]
         [Range(1, 60)]
         [DefaultValue(5)]
         public int Interval;

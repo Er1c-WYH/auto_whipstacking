@@ -1,4 +1,4 @@
-// AutoWhipPlayer.cs - 优化版（结构清晰、逻辑健壮、性能提升）
+// AutoWhipPlayer.cs - 副鞭→主鞭恢复修复版本（记录原主鞭，稳定回切）
 
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +25,7 @@ namespace auto_whipstacking
         private Dictionary<int, int> debuffWeaponTimers = new();
         private bool isInDebuffState = false;
         private int returnWeaponType = -1;
-        private int lastMainWhipType = -1;
+        private int returnFromSubWhipType = -1;
         private int savedMainWhipTimer = 0;
 
         private Dictionary<int, int> itemIndexCache = new();
@@ -38,6 +38,10 @@ namespace auto_whipstacking
             if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
                 return;
 
+            bool enableMainWhip = config.EnableMainWhip;
+            bool enableSubWhip = config.EnableSubWhip;
+            bool enableDebuffWeapon = config.EnableDebuffWeapon;
+
             bool isAttacking = Player.controlUseItem && Main.hasFocus;
 
             if (Main.playerInventory)
@@ -47,25 +51,18 @@ namespace auto_whipstacking
             }
 
             var validDebuffWeapons = config.DebuffWeapons
-                .Where(d => d.Weapon.Type > 0 &&
-                            Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
+                .Where(d => d.Weapon.Type > 0 && Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
                 .ToList();
 
             if (debuffWeaponTimers.Count != validDebuffWeapons.Count)
             {
                 debuffWeaponTimers.Clear();
                 foreach (var debuff in validDebuffWeapons)
-                {
                     debuffWeaponTimers[debuff.Weapon.Type] = 0;
-                }
             }
 
             foreach (var debuff in validDebuffWeapons)
-            {
-                int type = debuff.Weapon.Type;
-                if (debuffWeaponTimers.ContainsKey(type) && debuffWeaponTimers[type] < int.MaxValue)
-                    debuffWeaponTimers[type]++;
-            }
+                debuffWeaponTimers[debuff.Weapon.Type]++;
 
             if (isInDebuffState)
             {
@@ -74,12 +71,11 @@ namespace auto_whipstacking
                     isInDebuffState = false;
                     mainWhipTimer = savedMainWhipTimer;
 
-                    int index = FindItemIndex(lastMainWhipType >= 0 ? lastMainWhipType : returnWeaponType);
+                    int index = FindItemIndex(returnWeaponType);
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
-                            Player.SetDummyItemTime(1);
+                        Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreAfterDebuffWeapon") + Player.inventory[index].Name);
@@ -96,8 +92,7 @@ namespace auto_whipstacking
                     if (index >= 0)
                     {
                         Player.selectedItem = index;
-                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
-                            Player.SetDummyItemTime(1);
+                        Player.SetDummyItemTime(1);
                         switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
@@ -112,8 +107,16 @@ namespace auto_whipstacking
             if (heldItem == null || heldItem.IsAir || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
                 return;
 
+            bool isDebuffWeapon = config.DebuffWeapons.Any(d => d.Weapon.Type == heldItem.type);
+
             bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
             bool isSubWhip = config.WhipBuffPairs.Any(p => p.WhipItem.Type == heldItem.type);
+
+            if (!enableMainWhip && !isMainWhip && !isSubWhip)
+            {
+                wasAttackingLastFrame = false;
+                return;
+            }
 
             if (!wasAttackingLastFrame)
             {
@@ -123,9 +126,8 @@ namespace auto_whipstacking
                 if (!isMainWhip && !isSubWhip)
                 {
                     wasAttackingLastFrame = false;
-                    return;
+                    return; // 非主鞭/副鞭，跳过切鞭系统
                 }
-
                 mainWhipTimer = 0;
                 UpdateCurrentMainWhips(config);
             }
@@ -134,17 +136,11 @@ namespace auto_whipstacking
                 mainWhipTimer++;
             }
 
-            if (isMainWhip || isSubWhip)
+            if (enableDebuffWeapon && (isMainWhip || isSubWhip))
             {
                 var readyList = validDebuffWeapons
-                    .Where(d =>
-                        debuffWeaponTimers.TryGetValue(d.Weapon.Type, out int t) &&
-                        t >= d.Interval * 60)
-                    .OrderByDescending(d =>
-                    {
-                        var item = Player.inventory.FirstOrDefault(i => i.type == d.Weapon.Type);
-                        return item?.damage ?? 0;
-                    })
+                    .Where(d => debuffWeaponTimers[d.Weapon.Type] >= d.Interval * 60)
+                    .OrderByDescending(d => Player.inventory.FirstOrDefault(i => i.type == d.Weapon.Type)?.damage ?? 0)
                     .ToList();
 
                 if (readyList.Count > 0)
@@ -153,7 +149,6 @@ namespace auto_whipstacking
                     int index = FindItemIndex(selected.Weapon.Type);
                     if (index >= 0)
                     {
-                        lastMainWhipType = currentMainWhips.Count > 0 ? currentMainWhips[mainWhipIndex].type : heldItem.type;
                         returnWeaponType = heldItem.type;
                         savedMainWhipTimer = mainWhipTimer;
 
@@ -161,85 +156,80 @@ namespace auto_whipstacking
                         Player.SetDummyItemTime(1);
                         isInDebuffState = true;
                         debuffWeaponTimers[selected.Weapon.Type] = 0;
-
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToDebuffWeapon") + Player.inventory[index].Name);
-
                         return;
                     }
                 }
             }
 
-            if (!config.EnableAutoSwitch || config.MainWhips.Count == 0)
-                return;
-
-            if (switchCooldown > 0)
+            if (enableSubWhip)
             {
-                switchCooldown--;
-                return;
-            }
-
-            var missingBuffs = GetMissingBuffPairs(config);
-            if (missingBuffs.Count > 0)
-            {
-                var bestSub = Player.inventory
-                    .Where(i => i != null && !i.IsAir && missingBuffs.Any(p => p.WhipItem.Type == i.type))
-                    .OrderByDescending(i => i.damage)
-                    .FirstOrDefault();
-
-                if (bestSub != null && heldItem.type != bestSub.type)
+                var missingBuffs = GetMissingBuffPairs(config);
+                if (missingBuffs.Count > 0)
                 {
-                    int index = FindItemIndex(bestSub.type);
-                    if (index >= 0)
+                    var bestSub = Player.inventory
+                        .Where(i => i != null && !i.IsAir && missingBuffs.Any(p => p.WhipItem.Type == i.type))
+                        .OrderByDescending(i => i.damage)
+                        .FirstOrDefault();
+
+                    if (bestSub != null && heldItem.type != bestSub.type)
                     {
-                        Player.selectedItem = index;
-                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
-                            Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
-                        isInSubWhipState = true;
-                        if (config.LogEnabled)
-                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
+                        int index = FindItemIndex(bestSub.type);
+                        if (index >= 0)
+                        {
+                            returnFromSubWhipType = heldItem.type;
+                            Player.selectedItem = index;
+                            if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                                Player.SetDummyItemTime(1);
+                            switchCooldown = 10;
+                            isInSubWhipState = true;
+                            if (config.LogEnabled)
+                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
+                        }
                     }
+                    return;
                 }
-                return;
+            }
+            else
+            {
+                isInSubWhipState = false;
             }
 
             if (isInSubWhipState)
             {
                 isInSubWhipState = false;
-                if (currentMainWhips.Count > 0)
+                int index = FindItemIndex(returnFromSubWhipType);
+                if (index >= 0)
                 {
-                    int index = FindItemIndex(currentMainWhips[mainWhipIndex].type);
-                    if (index >= 0)
-                    {
-                        Player.selectedItem = index;
-                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
-                            Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
-                        if (config.LogEnabled)
-                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
-                    }
+                    Player.selectedItem = index;
+                    Player.SetDummyItemTime(1);
+                    switchCooldown = 10;
+                    if (config.LogEnabled)
+                        Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
                 }
                 return;
             }
 
-            if (mainWhipTimer >= config.MainWhipDuration && currentMainWhips.Count > 1)
+            if (enableMainWhip && !isInSubWhipState && mainWhipTimer >= config.MainWhipDuration && currentMainWhips.Count > 1)
             {
-                mainWhipTimer = 0;
-                mainWhipIndex = (mainWhipIndex + 1) % currentMainWhips.Count;
-                var next = currentMainWhips[mainWhipIndex];
-
-                if (heldItem.type != next.type)
+                if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                 {
-                    int index = FindItemIndex(next.type);
-                    if (index >= 0)
+                    mainWhipTimer = 0;
+                    mainWhipIndex = (mainWhipIndex + 1) % currentMainWhips.Count;
+                    var next = currentMainWhips[mainWhipIndex];
+
+                    if (heldItem.type != next.type)
                     {
-                        Player.selectedItem = index;
-                        if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                        int index = FindItemIndex(next.type);
+                        if (index >= 0)
+                        {
+                            Player.selectedItem = index;
                             Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
-                        if (config.LogEnabled)
-                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + next.Name);
+                            switchCooldown = 10;
+                            if (config.LogEnabled)
+                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + next.Name);
+                        }
                     }
                 }
             }

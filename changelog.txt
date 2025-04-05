@@ -1,19 +1,23 @@
-Version 2.2.0 has been published to Stable tModLoader v2025.2
+Version 2.3.0 has been published to Stable tModLoader v2025.2
 
-⚙️ 功能优化：
-✅ Debuff 武器现在仅在完成一次攻击动画后自动切回原始武器，避免连续攻击或停留过长。
+✨ 新增功能
+为主武器、副武器、Debuff 武器添加了独立开关，可以分别启用或禁用对应切换逻辑。
 
-🐞 修复内容：
-修复配置中包含已卸载模组的 debuff 武器时，导致整个 debuff 切换逻辑失效的问题。
-修复打开背包时仍会切换到 debuff 武器的问题（主鞭与副鞭原本不受影响）。
-修复在某些情况下主鞭使用时间较长，导致切入 debuff 后停留时间异常的问题。
+重写配置界面，界面更美观，逻辑更清晰。
+
+🧠 优化内容
+优化了核心自动切换逻辑，结构更稳定，便于后续维护。
+
+改进了 Debuff 武器切回主武器的判断逻辑，使行为更贴合预期。
 
 -------------------------------------------------
 
-⚙️ Improvements:
-✅ Debuff weapons now switch back to the previous weapon immediately after completing one attack animation.
+✨ New Features
+Added separate toggles for main weapon, sub weapon, and debuff weapon switching. You can now enable or disable each feature individually.
 
-🐞 Bug Fixes:
-Fixed an issue where having unloaded modded debuff weapons in the config would break all debuff switching.
-Fixed an issue where debuff weapons could still switch in while the inventory was open (main and sub whips were not affected).
-Fixed a timing issue where long main whip durations could cause debuff weapons to stay active longer than expected.
+Fully redesigned configuration UI for clarity and visual polish.
+
+🧠 Improvements
+Optimized core weapon switching logic for better stability and maintainability.
+
+Improved logic clarity for debuff weapon return behavior and weapon switching priority.

@@ -4,10 +4,11 @@
 
 A smart auto-switching mod for Summoners and buff-dependent players. Stay focused on movement while your weapons are switched automatically based on buff status, debuff cooldowns, and rotation setup.
 
-[h2]🆕 New Features (v2.0.0)[/h2]
+[h2]🆕 New Features (v2.3.0)[/h2]
 [list]
-[*] ✅ [b]Debuff weapon support[/b]: Each debuff weapon can have its own cooldown. The mod uses them automatically during combat
-[*] ✅ [b]Priority logic[/b]: Debuff > Sub weapon (for missing buff) > Main weapon rotation
+[*] ✅ Added [b]independent toggles[/b] for [b]main weapon / sub weapon / debuff weapon[/b], allowing you to enable or disable each switching system separately in the config UI
+[*] ✅ [b]Redesigned configuration UI[/b] with a cleaner layout, improved visual clarity, and better user experience
+[*] ✅ Optimized core switching logic for better stability and fixed some cases where weapons failed to switch back properly
 [/list]
 
 [h2]✨ Core Features[/h2]
@@ -28,6 +29,8 @@ A smart auto-switching mod for Summoners and buff-dependent players. Stay focuse
 [*] You can bind a toggle key in Controls to turn auto-switching on/off
 [*] The mod will handle weapon switching automatically during combat
 [/list]
+
+Full changelog available in Change Notes ↗
 
 [h2]🌍 Want to contribute translations or suggestions?[/h2]
 Submit them via GitHub:  

@@ -1,93 +1,106 @@
 Configs: {
-	AutoWhipConfig: {
-		DisplayName: Auto Whip Config
-		WhipBuffPairs.Tooltip: ""
-	}
-
-	WhipBuffPair: {
-		Tooltip: ""
-		WhipItemID.Tooltip: ""
-		BuffID.Tooltip: ""
-	}
-
+	AutoWhipConfig.DisplayName: Auto Whip Config
+	WhipBuffPair.Tooltip: ""
 	DebuffWeaponConfig.Tooltip: ""
 }
 
-AutoWhipConfig: {
+Config: {
 	EnableAutoSwitch: {
-		Label: Enable Auto Weapon Switch
-		Tooltip: Toggle whether the mod automatically switches to sub-whips and debuff weapons during combat
-	}
-
-	WhipBuffPairs: {
-		Label: Sub Weapon Buff Pair List
-		Tooltip: ""
+		Label: Enable Auto Switch
+		Tooltip: Automatically switch between main, sub, and debuff weapons according to the configuration
 	}
 
 	LogEnabled: {
-		Label: Show Log Messages
-		Tooltip: If enabled, weapon switch messages will be shown in the chat. Recommended for debugging use only
+		Label: Enable Log Output
+		Tooltip: Print debug messages when switching weapons. Recommended for developers only
 	}
 
-	UseBuffTimeThreshold: {
-		Label: Use Sub Weapon Buff Time Threshold
-		Tooltip: If the remaining time of a buff is below the value below, it will be considered missing
+	Headers: {
+		MainWhips: Main Weapon Settings
+		SubWhips: Sub Weapon Settings
+		DebuffWeapons: Debuff Weapon Settings
 	}
 
-	BuffTimeThreshold: {
-		Label: Buff Time Threshold (frames)
-		Tooltip: Trigger sub weapon switch if buff time left is below this value (60 frames = 1 second)
-	}
-
-	MainWhips: {
-		Label: Main Weapon List
-		Tooltip: Weapons to be used in automatic rotation
+	EnableMainWhip: {
+		Label: Enable Main Weapon Rotation
+		Tooltip: When enabled, the system will rotate main weapons in order during attacks
 	}
 
 	MainWhipDuration: {
 		Label: Main Weapon Duration (frames)
-		Tooltip: Number of frames each main weapon will be used before switching (60 frames = 1 second)
+		Tooltip: How many frames each main weapon is used before switching to the next (60 frames = 1 second)
+	}
+
+	MainWhips: {
+		Label: Main Weapon List
+		Tooltip: Weapons used for rotation during attacks
+	}
+
+	EnableSubWhip: {
+		Label: Enable Sub Weapon Switching
+		Tooltip: When enabled, the system will automatically switch to a sub weapon when its corresponding buff is missing
+	}
+
+	UseBuffTimeThreshold: {
+		Label: Enable Sub Weapon Buff Time Threshold
+		Tooltip: When enabled, switching will also occur if the remaining buff time falls below the threshold
+	}
+
+	BuffTimeThreshold: {
+		Label: Sub Weapon Buff Time Threshold (frames)
+		Tooltip: Switches to sub weapon if buff time drops below this value (60 frames = 1 second)
+	}
+
+	WhipBuffPair: {
+		WhipItem: {
+			Label: Sub Weapon
+			Tooltip: The sub weapon used to apply the buff
+		}
+
+		Buff: {
+			Label: Associated Buff
+			Tooltip: The buff applied after the sub weapon hits an enemy
+		}
+	}
+
+	WhipBuffPairs: {
+		Label: Sub Weapon Buff Pairs
+		Tooltip: Configure the pairing between sub weapons and their applied buffs
+	}
+
+	EnableDebuffWeapon: {
+		Label: Enable Debuff Weapon Insertion
+		Tooltip: When enabled, debuff weapons will be inserted periodically during combat
+	}
+
+	DebuffWeapon: {
+		Weapon: {
+			Label: Debuff Weapon
+			Tooltip: The weapon used to apply a debuff
+		}
+
+		Interval: {
+			Label: Use Interval (seconds)
+			Tooltip: Cooldown in seconds before this weapon can be used again
+		}
 	}
 
 	DebuffWeapons: {
-		Label: Debuff Weapons
-		Tooltip: Weapons used to periodically apply debuffs to enemies (⚠️ Avoid placing multiple debuff weapons with the same interval in your inventory to prevent repeat usage)
+		Label: Debuff Weapon List
+		Tooltip: Weapons that apply debuffs during combat
 	}
 }
 
-WhipBuffPair: {
-	WhipItemID: {
-		Label: Sub Weapon Item ID
-		Tooltip: Weapon that will be used automatically to apply a buff
-	}
-
-	BuffID: {
-		Label: Corresponding Buff ID
-		Tooltip: The buff used to determine if the sub weapon should be used
-	}
-}
-
-// ✨ Log messages
-SwitchToSubWhip: Missing buff, switched to sub weapon:
-SwitchToMainWhip: Buffs complete, switched to main weapon:
-RestoreInitialWeapon: Attack ended, restored to initial weapon
-SwitchToDebuffWeapon: Switched to debuff weapon:
-RestoreAfterDebuffWeapon: Debuff done, restored to weapon:
-Keybinds.ToggleSwitch.DisplayName: Toggle Auto Whip Switching
+Keybinds.ToggleSwitch.DisplayName: Toggle Auto Switch
 
 SwitchToggle: {
-	On: Auto whip switching enabled
-	Off: Auto whip switching disabled
+	On: Auto switching: Enabled
+	Off: Auto switching: Disabled
 }
 
-DebuffWeaponConfig: {
-	Weapon: {
-		Label: Debuff Weapon
-		Tooltip: Weapon used to apply debuffs periodically
-	}
-
-	Interval: {
-		Label: Use Interval (seconds)
-		Tooltip: Interval (in seconds) for each automatic use of this weapon
-	}
-}
+// log messages
+RestoreAfterDebuffWeapon: Switched back from debuff weapon:
+RestoreInitialWeapon: Switched back to original weapon
+SwitchToDebuffWeapon: Switched to debuff weapon:
+SwitchToSubWhip: Switched to sub weapon:
+SwitchToMainWhip: Switched to main weapon:

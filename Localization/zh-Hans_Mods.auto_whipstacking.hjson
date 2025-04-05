@@ -1,93 +1,106 @@
 Configs: {
-	AutoWhipConfig: {
-		DisplayName: 自动切鞭配置
-		WhipBuffPairs.Tooltip: ""
-	}
-
-	WhipBuffPair: {
-		Tooltip: ""
-		WhipItemID.Tooltip: ""
-		BuffID.Tooltip: ""
-	}
-
+	AutoWhipConfig.DisplayName: 自动切鞭配置
+	WhipBuffPair.Tooltip: ""
 	DebuffWeaponConfig.Tooltip: ""
 }
 
-AutoWhipConfig: {
+Config: {
 	EnableAutoSwitch: {
-		Label: 启用自动切换武器
-		Tooltip: 启用后，战斗中将自动切换至副鞭或附带减益效果的武器
-	}
-
-	WhipBuffPairs: {
-		Label: 副武器配置列表
-		Tooltip: ""
+		Label: 启用自动切鞭
+		Tooltip: 启用后将根据配置自动切换主武器、副武器与 Debuff 武器
 	}
 
 	LogEnabled: {
-		Label: 显示日志提示
-		Tooltip: 开启后将在聊天框显示主武器与副武器切换提示，推荐关闭，开发者使用
+		Label: 启用日志输出
+		Tooltip: 该项用于在切换武器时输出调试信息，建议仅在开发调试时启用
 	}
 
-	UseBuffTimeThreshold: {
-		Label: 启用副武器 Buff 时间阈值判断
-		Tooltip: Buff 剩余时间低于下方设定值时，判定为“Buff 不足”并切换副武器；若 Buff 已消失同样视为不足
+	Headers: {
+		MainWhips: 主武器设置
+		SubWhips: 副武器设置
+		DebuffWeapons: Debuff 武器设置
 	}
 
-	BuffTimeThreshold: {
-		Label: Buff 时间阈值（帧）
-		Tooltip: 若 Buff 剩余时间少于该值将触发切鞭（60 帧 = 1 秒）
-	}
-
-	MainWhips: {
-		Label: 主武器配置列表
-		Tooltip: 设置将被自动轮换使用的主武器
+	EnableMainWhip: {
+		Label: 启用主武器轮换
+		Tooltip: 启用后，系统将按照顺序自动轮换主武器进行攻击
 	}
 
 	MainWhipDuration: {
 		Label: 主武器使用时长（帧）
-		Tooltip: 每把主武器使用的帧数（1秒 = 60帧）
+		Tooltip: 每种主武器的使用时长（单位：帧），超过后轮换至下一种主武器（60 帧 = 1 秒）
+	}
+
+	MainWhips: {
+		Label: 主武器列表
+		Tooltip: 攻击时轮换使用的主武器集合
+	}
+
+	EnableSubWhip: {
+		Label: 启用副武器切换
+		Tooltip: 启用后，当身上缺少副武器对应的 Buff 时，系统将自动切换副武器
+	}
+
+	UseBuffTimeThreshold: {
+		Label: 启用副武器 Buff 时间阈值判断
+		Tooltip: 启用后，当副武器 Buff 剩余时间低于设定值时也会触发副武器切换
+	}
+
+	BuffTimeThreshold: {
+		Label: 副武器 Buff 剩余时间阈值（帧）
+		Tooltip: 当副武器 Buff 剩余时间低于该值时触发切换（60 帧 = 1 秒）
+	}
+
+	WhipBuffPair: {
+		WhipItem: {
+			Label: 副武器
+			Tooltip: 用于提供 Buff 的副武器
+		}
+
+		Buff: {
+			Label: 对应 Buff
+			Tooltip: 副武器攻击后给予的 Buff 效果
+		}
+	}
+
+	WhipBuffPairs: {
+		Label: 副武器与 Buff 配对
+		Tooltip: 设置副武器与其附加 Buff 的对应关系
+	}
+
+	EnableDebuffWeapon: {
+		Label: 启用 Debuff 武器插入
+		Tooltip: 启用后，战斗时系统将定期插入使用 Debuff 武器
+	}
+
+	DebuffWeapon: {
+		Weapon: {
+			Label: Debuff 武器
+			Tooltip: 用于施加 Debuff 效果的武器
+		}
+
+		Interval: {
+			Label: 使用间隔（秒）
+			Tooltip: 再次使用该武器前需等待的时间（单位：秒）
+		}
 	}
 
 	DebuffWeapons: {
-		Label: Debuff 武器
-		Tooltip: 会定期施加负面效果（Debuff）给敌人的武器列表（⚠️ 最好不要在背包里放多把拥有相同使用间隔的 Debuff 武器，以避免连续切换同一把）
+		Label: Debuff 武器列表
+		Tooltip: 战斗中用于施加 Debuff 效果的武器集合
 	}
 }
 
-WhipBuffPair: {
-	WhipItemID: {
-		Label: 副武器物品ID
-		Tooltip: 会被自动使用的副武器（需提供 Buff）
-	}
-
-	BuffID: {
-		Label: 对应的Buff ID
-		Tooltip: 此 Buff 用于判断是否需要自动切换
-	}
-}
-
-// ✨ Log messages
-SwitchToSubWhip: 缺失 Buff，切至副武器：
-SwitchToMainWhip: Buff 齐全，切至主武器：
-RestoreInitialWeapon: 攻击结束，恢复初始武器
-SwitchToDebuffWeapon: 已切换至 Debuff 武器：
-RestoreAfterDebuffWeapon: Debuff 武器使用完毕，已恢复至武器：
-Keybinds.ToggleSwitch.DisplayName: 开/关自动切鞭
+Keybinds.ToggleSwitch.DisplayName: 开/关 自动切换
 
 SwitchToggle: {
-	On: 切鞭功能已开启
-	Off: 切鞭功能已关闭
+	On: 自动切换：已开启
+	Off: 自动切换：已关闭
 }
 
-DebuffWeaponConfig: {
-	Weapon: {
-		Label: Debuff 武器
-		Tooltip: 用于定期施加 Debuff 的武器
-	}
-
-	Interval: {
-		Label: 使用间隔（秒）
-		Tooltip: 每次自动使用该武器的间隔时间（以秒为单位）
-	}
-}
+// log messages
+RestoreAfterDebuffWeapon: 从 Debuff 武器切回：
+RestoreInitialWeapon: 切回初始武器
+SwitchToDebuffWeapon: 切换到 Debuff 武器：
+SwitchToSubWhip: 切换到副武器：
+SwitchToMainWhip: 切换到主武器：
