@@ -29,6 +29,8 @@
 [*] 战斗中模组将根据配置逻辑自动切换武器
 [/list]
 
+所有更新日志都可以在改动说明里看到↗
+
 [h2]🌍 想参与翻译或贡献建议？[/h2]
 欢迎访问 GitHub 仓库提交本地化内容或改进建议。  
 👉 [url=https://github.com/Er1c-WYH/auto_whipstacking]GitHub 源码仓库[/url]

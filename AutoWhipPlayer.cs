@@ -1,4 +1,4 @@
-// AutoWhipPlayer.cs - 修复背包开启、卸载模组失效，以及 debuff 武器多次攻击问题
+// AutoWhipPlayer.cs - 优化版（结构清晰、逻辑健壮、性能提升）
 
 using System.Collections.Generic;
 using System.Linq;
@@ -28,23 +28,24 @@ namespace auto_whipstacking
         private int lastMainWhipType = -1;
         private int savedMainWhipTimer = 0;
 
+        private Dictionary<int, int> itemIndexCache = new();
+
         public override void PostUpdate()
         {
             var config = ModContent.GetInstance<AutoWhipConfig>();
+            itemIndexCache.Clear();
 
             if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
                 return;
 
-            bool isAttacking = Main.mouseLeft && Main.hasFocus;
+            bool isAttacking = Player.controlUseItem && Main.hasFocus;
 
-            // 玩家打开背包时，禁用所有自动切换
             if (Main.playerInventory)
             {
                 wasAttackingLastFrame = false;
                 return;
             }
 
-            // 初始化合法的 debuff 武器
             var validDebuffWeapons = config.DebuffWeapons
                 .Where(d => d.Weapon.Type > 0 &&
                             Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
@@ -59,7 +60,13 @@ namespace auto_whipstacking
                 }
             }
 
-            // 处理 debuff 武器状态：攻击完成后立刻切回
+            foreach (var debuff in validDebuffWeapons)
+            {
+                int type = debuff.Weapon.Type;
+                if (debuffWeaponTimers.ContainsKey(type) && debuffWeaponTimers[type] < int.MaxValue)
+                    debuffWeaponTimers[type]++;
+            }
+
             if (isInDebuffState)
             {
                 if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
@@ -78,7 +85,7 @@ namespace auto_whipstacking
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreAfterDebuffWeapon") + Player.inventory[index].Name);
                     }
                 }
-                return; // 不执行后续逻辑
+                return;
             }
 
             if (!isAttacking)
@@ -102,7 +109,7 @@ namespace auto_whipstacking
             }
 
             var heldItem = Player.HeldItem;
-            if (heldItem == null || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
+            if (heldItem == null || heldItem.IsAir || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
                 return;
 
             bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
@@ -125,12 +132,6 @@ namespace auto_whipstacking
             else if (!isInSubWhipState)
             {
                 mainWhipTimer++;
-            }
-
-            foreach (var key in debuffWeaponTimers.Keys.ToList())
-            {
-                if (debuffWeaponTimers[key] < int.MaxValue)
-                    debuffWeaponTimers[key]++;
             }
 
             if (isMainWhip || isSubWhip)
@@ -255,7 +256,12 @@ namespace auto_whipstacking
 
         private int FindItemIndex(int type)
         {
-            return Array.FindIndex(Player.inventory, i => i != null && i.type == type);
+            if (itemIndexCache.TryGetValue(type, out int cached))
+                return cached;
+
+            int index = Array.FindIndex(Player.inventory, i => i != null && i.type == type);
+            if (index >= 0) itemIndexCache[type] = index;
+            return index;
         }
 
         private List<WhipBuffPair> GetMissingBuffPairs(AutoWhipConfig config)
