@@ -15,8 +15,8 @@ Configs: {
 
 AutoWhipConfig: {
 	EnableAutoSwitch: {
-		Label: 启用自动切换副武器
-		Tooltip: 当你没有武器 Buff 时，自动切换副武器使用
+		Label: 启用自动切换武器
+		Tooltip: 启用后，战斗中将自动切换至副鞭或附带减益效果的武器
 	}
 
 	WhipBuffPairs: {
@@ -30,7 +30,7 @@ AutoWhipConfig: {
 	}
 
 	UseBuffTimeThreshold: {
-		Label: 启用 Buff 时间阈值判断
+		Label: 启用副武器 Buff 时间阈值判断
 		Tooltip: Buff 剩余时间低于下方设定值时，判定为“Buff 不足”并切换副武器；若 Buff 已消失同样视为不足
 	}
 

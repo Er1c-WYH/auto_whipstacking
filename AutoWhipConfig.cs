@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
-using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
-using Terraria.ModLoader.Config.UI;
 using Terraria.ID;
 
 namespace auto_whipstacking

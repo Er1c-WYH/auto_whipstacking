@@ -15,8 +15,8 @@ Configs: {
 
 AutoWhipConfig: {
 	EnableAutoSwitch: {
-		Label: Enable Auto Sub Weapon Switch
-		Tooltip: Automatically switch to a sub weapon when you don't have the corresponding buff.
+		Label: Enable Auto Weapon Switch
+		Tooltip: Toggle whether the mod automatically switches to sub-whips and debuff weapons during combat
 	}
 
 	WhipBuffPairs: {
@@ -26,12 +26,12 @@ AutoWhipConfig: {
 
 	LogEnabled: {
 		Label: Show Log Messages
-		Tooltip: If enabled, weapon switch messages will be shown in the chat. Recommended for debugging use only.
+		Tooltip: If enabled, weapon switch messages will be shown in the chat. Recommended for debugging use only
 	}
 
 	UseBuffTimeThreshold: {
-		Label: Use Buff Time Threshold
-		Tooltip: If the remaining time of a buff is below the value below, it will be considered missing.
+		Label: Use Sub Weapon Buff Time Threshold
+		Tooltip: If the remaining time of a buff is below the value below, it will be considered missing
 	}
 
 	BuffTimeThreshold: {
@@ -51,7 +51,7 @@ AutoWhipConfig: {
 
 	DebuffWeapons: {
 		Label: Debuff Weapons
-		Tooltip: Weapons used to periodically apply debuffs to enemies (⚠️ Avoid placing multiple debuff weapons with the same interval in your inventory to prevent repeat usage.)
+		Tooltip: Weapons used to periodically apply debuffs to enemies (⚠️ Avoid placing multiple debuff weapons with the same interval in your inventory to prevent repeat usage)
 	}
 }
 
