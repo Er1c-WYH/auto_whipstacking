@@ -1,5 +1,3 @@
-// AutoWhipPlayer.cs - 副鞭→主鞭恢复修复版本（记录原主鞭，稳定回切）
-
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -19,6 +17,7 @@ namespace auto_whipstacking
 
         private int initialWeaponType = -1;
         private bool wasAttackingLastFrame = false;
+        private bool pendingReturnToInitialWeapon = false;
 
         private int switchCooldown = 0;
 
@@ -44,9 +43,25 @@ namespace auto_whipstacking
 
             bool isAttacking = Player.controlUseItem && Main.hasFocus;
 
+            // ✅ 优先处理待还原初始主鞭逻辑（不依赖攻击状态）
+            if (pendingReturnToInitialWeapon && Player.itemAnimation <= 1 && Player.itemTime <= 1)
+            {
+                int index = FindItemIndex(initialWeaponType);
+                if (index >= 0)
+                {
+                    Player.selectedItem = index;
+                    Player.SetDummyItemTime(1);
+                    switchCooldown = 10;
+                    if (config.LogEnabled)
+                        Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                }
+                pendingReturnToInitialWeapon = false;
+            }
+
             if (Main.playerInventory)
             {
                 wasAttackingLastFrame = false;
+                pendingReturnToInitialWeapon = false;
                 return;
             }
 
@@ -88,14 +103,21 @@ namespace auto_whipstacking
             {
                 if (wasAttackingLastFrame && initialWeaponType != -1 && Player.HeldItem.type != initialWeaponType)
                 {
-                    int index = FindItemIndex(initialWeaponType);
-                    if (index >= 0)
+                    if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                     {
-                        Player.selectedItem = index;
-                        Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
-                        if (config.LogEnabled)
-                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                        int index = FindItemIndex(initialWeaponType);
+                        if (index >= 0)
+                        {
+                            Player.selectedItem = index;
+                            Player.SetDummyItemTime(1);
+                            switchCooldown = 10;
+                            if (config.LogEnabled)
+                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                        }
+                    }
+                    else
+                    {
+                        pendingReturnToInitialWeapon = true;
                     }
                 }
 
@@ -106,8 +128,6 @@ namespace auto_whipstacking
             var heldItem = Player.HeldItem;
             if (heldItem == null || heldItem.IsAir || heldItem.damage <= 0 || heldItem.useStyle <= ItemUseStyleID.None)
                 return;
-
-            bool isDebuffWeapon = config.DebuffWeapons.Any(d => d.Weapon.Type == heldItem.type);
 
             bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
             bool isSubWhip = config.WhipBuffPairs.Any(p => p.WhipItem.Type == heldItem.type);
@@ -121,13 +141,15 @@ namespace auto_whipstacking
             if (!wasAttackingLastFrame)
             {
                 wasAttackingLastFrame = true;
+                pendingReturnToInitialWeapon = false;
                 initialWeaponType = heldItem.type;
 
                 if (!isMainWhip && !isSubWhip)
                 {
                     wasAttackingLastFrame = false;
-                    return; // 非主鞭/副鞭，跳过切鞭系统
+                    return;
                 }
+
                 mainWhipTimer = 0;
                 UpdateCurrentMainWhips(config);
             }
