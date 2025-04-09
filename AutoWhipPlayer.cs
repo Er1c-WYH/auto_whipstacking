@@ -304,8 +304,11 @@ namespace auto_whipstacking
         {
             currentMainWhips = Player.inventory
                 .Where(i => i != null && !i.IsAir && config.MainWhips.Any(m => m.Type == i.type))
+                .GroupBy(i => i.type) // 按类型分组
+                .Select(g => g.First()) // 每种只取一个
                 .OrderByDescending(i => i.damage)
                 .ToList();
+
             mainWhipIndex = 0;
         }
 
