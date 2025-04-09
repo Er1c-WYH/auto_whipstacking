@@ -251,21 +251,20 @@ namespace auto_whipstacking
                         .OrderByDescending(i => i.damage)
                         .FirstOrDefault();
 
-                    if (bestSub != null && heldItem.type != bestSub.type)
-                    {
-                        int index = FindItemIndex(bestSub.type);
-                        if (index >= 0)
+                        if (bestSub != null && heldItem.type != bestSub.type)
                         {
-                            returnFromSubWhipType = heldItem.type;
-                            Player.selectedItem = index;
-                            if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                            int index = FindItemIndex(bestSub.type);
+                            if (index >= 0 && Player.itemAnimation <= 1 && Player.itemTime <= 1)
+                            {
+                                returnFromSubWhipType = heldItem.type;
+                                Player.selectedItem = index;
                                 Player.SetDummyItemTime(1);
-                            switchCooldown = 10;
-                            isInSubWhipState = true;
-                            if (config.LogEnabled)
-                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
+                                switchCooldown = 10;
+                                isInSubWhipState = true;
+                                if (config.LogEnabled)
+                                    Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
+                            }
                         }
-                    }
                     wasPlayerInventoryOpenLastFrame = false;
                     return;
                 }
@@ -277,15 +276,18 @@ namespace auto_whipstacking
 
             if (isInSubWhipState)
             {
-                isInSubWhipState = false;
-                int index = FindItemIndex(returnFromSubWhipType);
-                if (index >= 0)
+                if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                 {
-                    Player.selectedItem = index;
-                    Player.SetDummyItemTime(1);
-                    switchCooldown = 10;
-                    if (config.LogEnabled)
-                        Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
+                    isInSubWhipState = false;
+                    int index = FindItemIndex(returnFromSubWhipType);
+                    if (index >= 0)
+                    {
+                        Player.selectedItem = index;
+                        Player.SetDummyItemTime(1);
+                        switchCooldown = 10;
+                        if (config.LogEnabled)
+                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
+                    }
                 }
                 wasPlayerInventoryOpenLastFrame = false;
                 return;
