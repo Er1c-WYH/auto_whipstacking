@@ -1,9 +1,11 @@
-Version 2.3.1 has been published to Stable tModLoader v2025.2
+Version 2.3.2 has been published to Stable tModLoader v2025.2
 
-修复了在高频点击鼠标时攻击速度异常加快的问题。
-该问题是由于攻击动画尚未结束时模组切回初始武器，导致玩家可以绕过攻击冷却。现在动画未结束时不会立即切回主武器，动画结束后才会自动还原。
+修复：连续点击或开关背包后，模组错误地将不在快捷栏中的武器视为初始武器的问题
+
+优化：现在只有快捷栏中的武器才会被记录为初始武器，用于后续还原逻辑
 
 -------------------------------------------------
 
-Fixed an issue where rapidly clicking the mouse caused whip attacks to become abnormally fast.
-This was caused by switching back to the initial weapon before the attack animation finished, allowing players to bypass cooldown. Now the weapon only switches back after the animation ends.
+Fixed: Bug where weapons outside the hotbar could be incorrectly recorded as the initial weapon after rapid clicks or toggling the inventory
+
+Improved: Only weapons in the hotbar are now eligible to be recorded as the initial weapon for later restoration
