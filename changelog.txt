@@ -4,8 +4,12 @@ Version 2.3.2 has been published to Stable tModLoader v2025.2
 
 优化：现在只有快捷栏中的武器才会被记录为初始武器，用于后续还原逻辑
 
+现在每种主鞭类型只会轮换一次，即使有多个相同的武器也只使用其中一把
+
 -------------------------------------------------
 
 Fixed: Bug where weapons outside the hotbar could be incorrectly recorded as the initial weapon after rapid clicks or toggling the inventory
 
 Improved: Only weapons in the hotbar are now eligible to be recorded as the initial weapon for later restoration
+
+Now only one instance of each main whip type is used in the rotation, even if duplicates exist
