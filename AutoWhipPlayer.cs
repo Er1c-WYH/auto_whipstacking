@@ -39,15 +39,15 @@ namespace auto_whipstacking
             if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
                 return;
 
-            // ✅ 玩家刚刚关闭背包（本帧关闭，上一帧是开）
             if (!Main.playerInventory && wasPlayerInventoryOpenLastFrame)
             {
                 bool isValidHeld = Player.HeldItem != null && !Player.HeldItem.IsAir && Player.HeldItem.damage > 0;
 
-                // ✅ 两种情况都可触发恢复主鞭
-                if ((Player.selectedItem >= 10 && !isValidHeld) ||  // 空槽且不在快捷栏
+                if ((Player.selectedItem >= 10 && !isValidHeld) ||
                     (Player.selectedItem >= 10 && isValidHeld && Player.HeldItem.type != initialWeaponType))
                 {
+                    if (initialWeaponType <= 0) return;
+
                     int index = FindItemIndex(initialWeaponType);
                     if (index >= 0 && index < 10 && !Player.inventory[index].IsAir)
                     {
@@ -56,6 +56,10 @@ namespace auto_whipstacking
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
                     }
+                    else
+                    {
+                        Player.selectedItem = 0;
+                    }
                 }
             }
 
@@ -63,18 +67,24 @@ namespace auto_whipstacking
             bool enableSubWhip = config.EnableSubWhip;
             bool enableDebuffWeapon = config.EnableDebuffWeapon;
 
-            bool isAttacking = Player.controlUseItem && Main.hasFocus;
+            // ✅ 更安全的攻击判断
+            bool isAttacking = Player.controlUseItem && Main.hasFocus &&
+                               Player.HeldItem != null && !Player.HeldItem.IsAir &&
+                               Player.HeldItem.damage > 0 && Player.HeldItem.useStyle > ItemUseStyleID.None;
 
             if (pendingReturnToInitialWeapon && Player.itemAnimation <= 1 && Player.itemTime <= 1)
             {
-                int index = FindItemIndex(initialWeaponType);
-                if (index >= 0)
+                if (initialWeaponType > 0)
                 {
-                    Player.selectedItem = index;
-                    Player.SetDummyItemTime(1);
-                    switchCooldown = 10;
-                    if (config.LogEnabled)
-                        Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                    int index = FindItemIndex(initialWeaponType);
+                    if (index >= 0)
+                    {
+                        Player.selectedItem = index;
+                        Player.SetDummyItemTime(1);
+                        switchCooldown = 10;
+                        if (config.LogEnabled)
+                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                    }
                 }
                 pendingReturnToInitialWeapon = false;
             }
