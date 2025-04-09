@@ -42,17 +42,14 @@ namespace auto_whipstacking
             // ✅ 玩家刚刚关闭背包（本帧关闭，上一帧是开）
             if (!Main.playerInventory && wasPlayerInventoryOpenLastFrame)
             {
-                bool isStillAttacking = Player.controlUseItem && Player.HeldItem.useStyle > ItemUseStyleID.None;
+                bool isValidHeld = Player.HeldItem != null && !Player.HeldItem.IsAir && Player.HeldItem.damage > 0;
 
-                if (!isStillAttacking &&
-                    Player.selectedItem >= 10 &&
-                    Player.HeldItem != null &&
-                    !Player.HeldItem.IsAir &&
-                    initialWeaponType > 0 &&
-                    Player.HeldItem.type != initialWeaponType)
+                // ✅ 两种情况都可触发恢复主鞭
+                if ((Player.selectedItem >= 10 && !isValidHeld) ||  // 空槽且不在快捷栏
+                    (Player.selectedItem >= 10 && isValidHeld && Player.HeldItem.type != initialWeaponType))
                 {
                     int index = FindItemIndex(initialWeaponType);
-                    if (index >= 0 && index < 10)
+                    if (index >= 0 && index < 10 && !Player.inventory[index].IsAir)
                     {
                         Player.selectedItem = index;
                         Player.SetDummyItemTime(1);
