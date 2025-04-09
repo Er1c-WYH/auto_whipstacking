@@ -39,7 +39,19 @@ namespace auto_whipstacking
             if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
                 return;
 
-            // ✅ 玩家刚刚关闭背包（本帧关闭，上一帧是开）
+            if (!Main.playerInventory && Player.HeldItem.IsAir)
+            {
+                // 仅当“刚关闭背包” 或 “处于攻击状态” 才尝试恢复武器，防止误干涉
+                bool justClosedInventory = wasPlayerInventoryOpenLastFrame;
+                bool currentlyAttacking = Player.controlUseItem && Main.hasFocus;
+
+                if (justClosedInventory || currentlyAttacking)
+                {
+                    TryRestoreValidWeapon();
+                    return;
+                }
+            }
+
             if (!Main.playerInventory && wasPlayerInventoryOpenLastFrame)
             {
                 bool isStillAttacking = Player.controlUseItem && Player.HeldItem.useStyle > ItemUseStyleID.None;
@@ -51,6 +63,7 @@ namespace auto_whipstacking
                     initialWeaponType > 0 &&
                     Player.HeldItem.type != initialWeaponType)
                 {
+                    // ✅ 查找主鞭是否还在快捷栏
                     int index = FindItemIndex(initialWeaponType);
                     if (index >= 0 && index < 10)
                     {
@@ -58,6 +71,11 @@ namespace auto_whipstacking
                         Player.SetDummyItemTime(1);
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
+                    }
+                    else
+                    {
+                        // ✅ 主鞭已不在快捷栏，强制切回快捷栏第一格
+                        Player.selectedItem = 0;
                     }
                 }
             }
@@ -298,6 +316,46 @@ namespace auto_whipstacking
 
             // ✅ 最后更新“上一帧背包状态”
             wasPlayerInventoryOpenLastFrame = Main.playerInventory;
+        }
+
+        private void TryRestoreValidWeapon()
+        {
+            var config = ModContent.GetInstance<AutoWhipConfig>();
+            int index = -1;
+
+            if (initialWeaponType > 0)
+                index = FindItemIndex(initialWeaponType);
+
+            if ((index < 0 || index >= 10 || Player.inventory[index].IsAir) && returnFromSubWhipType > 0)
+                index = FindItemIndex(returnFromSubWhipType);
+
+            if (index < 0 || index >= 10 || Player.inventory[index].IsAir)
+            {
+                var fallbackMain = Player.inventory
+                    .Take(10)
+                    .Where(i => i != null && !i.IsAir && config.MainWhips.Any(m => m.Type == i.type))
+                    .OrderByDescending(i => i.damage)
+                    .FirstOrDefault();
+                if (fallbackMain != null)
+                    index = FindItemIndex(fallbackMain.type);
+            }
+
+            if (index < 0 || index >= 10 || Player.inventory[index].IsAir)
+            {
+                Player.selectedItem = 0;
+                if (Player.inventory[0].IsAir)
+                    Player.HeldItem.TurnToAir();
+
+                initialWeaponType = -1;
+                returnFromSubWhipType = -1;
+                pendingReturnToInitialWeapon = false;
+                isInSubWhipState = false;
+                isInDebuffState = false;
+                return;
+            }
+
+            Player.selectedItem = index;
+            Player.SetDummyItemTime(1);
         }
 
         private void UpdateCurrentMainWhips(AutoWhipConfig config)
