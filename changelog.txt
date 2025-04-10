@@ -1,7 +1,21 @@
-Version 2.3.3 has been published to Stable tModLoader v2025.2
+Version 2.3.4 has been published to Stable tModLoader v2025.2
 
-当玩家在自动切鞭过程中打开背包并移动物品时，系统将更加智能地处理武器恢复逻辑。
+🐞 修复问题：
+副鞭不在快捷栏、主鞭调换位置后无法正确切回问题
+修复了在攻击过程中，如果副鞭不在快捷栏，玩家打开背包并调换主副鞭位置后，系统仍尝试切回已不在快捷栏的主鞭，导致切换异常的问题。
+➤ 现在将优先切回在快捷栏中的主鞭，若无主鞭则尝试切回副鞭，最后尝试切回快捷栏第一格。
+
+副鞭切回主鞭时攻击速度异常问题
+修复了副鞭切换回主鞭的瞬间，如果玩家进行快速攻击操作，可能导致攻击动画错乱、攻速异常的情况。
+➤ 现在切回主鞭将在攻击动作完成后延迟执行，避免干扰正常攻击节奏。
 
 -------------------------------------------------
 
-When the player opens the inventory and moves items during an auto whip switch, the system now handles weapon recovery more intelligently.
+🐞 Bug Fixes:
+Failed to switch back to main whip after swapping with off-hotbar sub-whip
+Fixed an issue where, during combat, if the sub-whip was not in the hotbar and the player swapped it with the main whip via inventory, the system would incorrectly switch back to a main whip that was no longer in the hotbar.
+➤ Now the system will prioritize switching to a main whip in the hotbar, then a sub-whip in the hotbar, and finally fallback to slot 0 if none are found.
+
+Attack speed glitch when switching from sub-whip back to main whip
+Fixed a bug where rapidly attacking after the sub-whip switched back to the main whip could cause animation glitches or abnormally fast attacks.
+➤ Switching back to the main whip is now delayed until the current attack cycle is fully completed, ensuring a smoother transition.
