@@ -1,3 +1,3 @@
-Version 2.3.5 has been published to Stable tModLoader v2025.2
+Version 2.3.6 has been published to Stable tModLoader v2025.2
 
-修复了debuff武器切换时可能导致DPS异常的问题
+修复了切换到debuff武器时打开关闭背包后玩家所选物品在快捷栏的bug

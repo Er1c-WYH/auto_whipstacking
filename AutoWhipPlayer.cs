@@ -99,7 +99,7 @@ namespace auto_whipstacking
                     mainWhipTimer = savedMainWhipTimer;
 
                     int index = FindItemIndex(returnWeaponType);
-                    if (index >= 0)
+                    if (index >= 0 && index < 10)
                     {
                         Player.selectedItem = index;
                         Player.SetDummyItemTime(1);
@@ -341,6 +341,7 @@ namespace auto_whipstacking
         {
             int index = FindItemIndex(initialWeaponType);
 
+            // ✅ 修复：只有当主武器在快捷栏中时才恢复，否则 fallback
             if (index >= 0 && index < 10)
             {
                 Player.selectedItem = index;
