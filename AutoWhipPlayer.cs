@@ -19,8 +19,6 @@ namespace auto_whipstacking
         private bool wasAttackingLastFrame = false;
         private bool pendingReturnToInitialWeapon = false;
 
-        private int switchCooldown = 0;
-
         private Dictionary<int, int> debuffWeaponTimers = new();
         private bool isInDebuffState = false;
         private int returnWeaponType = -1;
@@ -47,10 +45,8 @@ namespace auto_whipstacking
             bool isAttacking = Player.controlUseItem && Main.hasFocus &&
                                isValidHeld && Player.HeldItem.useStyle > ItemUseStyleID.None;
 
-            // ✅ 背包关闭时恢复逻辑：
             if (!Main.playerInventory && wasPlayerInventoryOpenLastFrame)
             {
-                // ✅ 如果当前不是在攻击，并且当前手持的物品格不在快捷栏，则触发恢复逻辑
                 if (!isAttacking && (Player.selectedItem < 0 || Player.selectedItem >= 10))
                 {
                     TryRestoreWeaponAfterInventory(config);
@@ -66,7 +62,6 @@ namespace auto_whipstacking
                     {
                         Player.selectedItem = index;
                         Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
                     }
@@ -108,7 +103,6 @@ namespace auto_whipstacking
                     {
                         Player.selectedItem = index;
                         Player.SetDummyItemTime(1);
-                        switchCooldown = 10;
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreAfterDebuffWeapon") + Player.inventory[index].Name);
                     }
@@ -128,7 +122,6 @@ namespace auto_whipstacking
                         {
                             Player.selectedItem = index;
                             Player.SetDummyItemTime(1);
-                            switchCooldown = 10;
                             if (config.LogEnabled)
                                 Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.RestoreInitialWeapon"));
                         }
@@ -166,7 +159,6 @@ namespace auto_whipstacking
                 wasAttackingLastFrame = true;
                 pendingReturnToInitialWeapon = false;
 
-                // ✅ 只有快捷栏里的武器才记录为初始主武器
                 if (Player.selectedItem >= 0 && Player.selectedItem < 10)
                 {
                     initialWeaponType = heldItem.type;
@@ -187,7 +179,8 @@ namespace auto_whipstacking
                 mainWhipTimer++;
             }
 
-            if (enableDebuffWeapon && (isMainWhip || isSubWhip))
+            // ✅ Debuff武器优先插入（持续判断）
+            if (enableDebuffWeapon && Player.itemAnimation <= 1 && Player.itemTime <= 1)
             {
                 var readyList = validDebuffWeapons
                     .Where(d => debuffWeaponTimers[d.Weapon.Type] >= d.Interval * 60)
@@ -207,8 +200,10 @@ namespace auto_whipstacking
                         Player.SetDummyItemTime(1);
                         isInDebuffState = true;
                         debuffWeaponTimers[selected.Weapon.Type] = 0;
+
                         if (config.LogEnabled)
                             Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToDebuffWeapon") + Player.inventory[index].Name);
+
                         wasPlayerInventoryOpenLastFrame = false;
                         return;
                     }
@@ -225,20 +220,19 @@ namespace auto_whipstacking
                         .OrderByDescending(i => i.damage)
                         .FirstOrDefault();
 
-                        if (bestSub != null && heldItem.type != bestSub.type)
+                    if (bestSub != null && heldItem.type != bestSub.type)
+                    {
+                        int index = FindItemIndex(bestSub.type);
+                        if (index >= 0 && Player.itemAnimation <= 1 && Player.itemTime <= 1)
                         {
-                            int index = FindItemIndex(bestSub.type);
-                            if (index >= 0 && Player.itemAnimation <= 1 && Player.itemTime <= 1)
-                            {
-                                returnFromSubWhipType = heldItem.type;
-                                Player.selectedItem = index;
-                                Player.SetDummyItemTime(1);
-                                switchCooldown = 10;
-                                isInSubWhipState = true;
-                                if (config.LogEnabled)
-                                    Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
-                            }
+                            returnFromSubWhipType = heldItem.type;
+                            Player.selectedItem = index;
+                            Player.SetDummyItemTime(1);
+                            isInSubWhipState = true;
+                            if (config.LogEnabled)
+                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
                         }
+                    }
                     wasPlayerInventoryOpenLastFrame = false;
                     return;
                 }
@@ -258,8 +252,7 @@ namespace auto_whipstacking
                         if (Player.selectedItem != index)
                         {
                             Player.selectedItem = index;
-                            Player.SetDummyItemTime(1); // 切回主鞭
-                            switchCooldown = 10;
+                            Player.SetDummyItemTime(1);
                             if (config.LogEnabled)
                                 Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
                         }
@@ -287,7 +280,6 @@ namespace auto_whipstacking
                         {
                             Player.selectedItem = index;
                             Player.SetDummyItemTime(1);
-                            switchCooldown = 10;
                             if (config.LogEnabled)
                                 Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + next.Name);
                         }
@@ -295,7 +287,6 @@ namespace auto_whipstacking
                 }
             }
 
-            // ✅ 最后更新“上一帧背包状态”
             wasPlayerInventoryOpenLastFrame = Main.playerInventory;
         }
 
@@ -303,8 +294,8 @@ namespace auto_whipstacking
         {
             currentMainWhips = Player.inventory
                 .Where(i => i != null && !i.IsAir && config.MainWhips.Any(m => m.Type == i.type))
-                .GroupBy(i => i.type) // 按类型分组
-                .Select(g => g.First()) // 每种只取一个
+                .GroupBy(i => i.type)
+                .Select(g => g.First())
                 .OrderByDescending(i => i.damage)
                 .ToList();
 
@@ -389,7 +380,6 @@ namespace auto_whipstacking
                 return;
             }
 
-            // ✅ 最后一步：无论是否为空，都切回快捷栏第一格
             Player.selectedItem = 0;
             Player.SetDummyItemTime(1);
         }
