@@ -1,5 +1,7 @@
-Version 2.3.7 has been published to Stable tModLoader v2025.2
+Version 2.4.0 has been published to Stable tModLoader v2025.2
 
-优化了debuff武器配置列表的保存逻辑
+移除了单独开关主鞭轮换的配置项
 
-修复只持有单个主鞭时副鞭无法切换会主鞭的bug
+----------------------------------------
+
+Removed the separate toggle for main whip rotation in the configuration.

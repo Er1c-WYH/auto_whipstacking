@@ -21,11 +21,6 @@ Config: {
 		DebuffWeapons: Debuff 武器设置
 	}
 
-	EnableMainWhip: {
-		Label: 启用主武器轮换
-		Tooltip: 启用后，系统将按照顺序自动轮换主武器进行攻击
-	}
-
 	MainWhipDuration: {
 		Label: 主武器使用时长（帧）
 		Tooltip: 每种主武器的使用时长（单位：帧），超过后轮换至下一种主武器（60 帧 = 1 秒）

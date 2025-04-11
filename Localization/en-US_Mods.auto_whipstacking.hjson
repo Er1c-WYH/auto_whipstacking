@@ -21,11 +21,6 @@ Config: {
 		DebuffWeapons: Debuff Weapon Settings
 	}
 
-	EnableMainWhip: {
-		Label: Enable Main Weapon Rotation
-		Tooltip: When enabled, the system will rotate main weapons in order during attacks
-	}
-
 	MainWhipDuration: {
 		Label: Main Weapon Duration (frames)
 		Tooltip: How many frames each main weapon is used before switching to the next (60 frames = 1 second)

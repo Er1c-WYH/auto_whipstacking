@@ -21,11 +21,6 @@ namespace auto_whipstacking
 
         [Header("$Mods.auto_whipstacking.Config.Headers.MainWhips")] // 主鞭头部
 
-        [LabelKey("$Mods.auto_whipstacking.Config.EnableMainWhip.Label")]
-        [TooltipKey("$Mods.auto_whipstacking.Config.EnableMainWhip.Tooltip")]
-        [DefaultValue(true)]
-        public bool EnableMainWhip { get; set; } // 主鞭开关
-
         [LabelKey("$Mods.auto_whipstacking.Config.MainWhipDuration.Label")]
         [TooltipKey("$Mods.auto_whipstacking.Config.MainWhipDuration.Tooltip")]
         [DefaultValue(60)]

@@ -38,7 +38,7 @@ namespace auto_whipstacking
             if (!config.EnableAutoSwitch || !AutoWhipKeybinds.SwitchingEnabled)
                 return;
 
-            bool enableMainWhip = config.EnableMainWhip;
+            bool enableMainWhip = true; 
             bool enableSubWhip = config.EnableSubWhip;
             bool enableDebuffWeapon = config.EnableDebuffWeapon;
 
