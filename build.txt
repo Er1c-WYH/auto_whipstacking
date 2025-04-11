@@ -1,5 +1,5 @@
 displayName = Auto Whipstacking（自动切鞭）
 author = jilijili
-version = 2.3.6
+version = 2.3.7
 side = Client
 homepage = https://github.com/Er1c-WYH/auto_whipstacking

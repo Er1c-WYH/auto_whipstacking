@@ -1,3 +1,5 @@
-Version 2.3.6 has been published to Stable tModLoader v2025.2
+Version 2.3.7 has been published to Stable tModLoader v2025.2
 
-修复了切换到debuff武器时打开关闭背包后玩家所选物品在快捷栏的bug
+优化了debuff武器配置列表的保存逻辑
+
+修复只持有单个主鞭时副鞭无法切换会主鞭的bug

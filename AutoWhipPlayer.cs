@@ -82,7 +82,8 @@ namespace auto_whipstacking
                 .Where(d => d.Weapon.Type > 0 && Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
                 .ToList();
 
-            if (debuffWeaponTimers.Count != validDebuffWeapons.Count)
+            // ✅ 修复：debuffWeaponTimers 判断只看数量不够安全，改为按 key 内容匹配，避免 config 改动后数据不同步
+            if (!validDebuffWeapons.All(d => debuffWeaponTimers.ContainsKey(d.Weapon.Type)))
             {
                 debuffWeaponTimers.Clear();
                 foreach (var debuff in validDebuffWeapons)
