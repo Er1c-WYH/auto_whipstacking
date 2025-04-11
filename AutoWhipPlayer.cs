@@ -23,6 +23,7 @@ namespace auto_whipstacking
         private bool isInDebuffState = false;
         private int returnWeaponType = -1;
         private int returnFromSubWhipType = -1;
+        private int returnToMainWhipType = -1;
         private int savedMainWhipTimer = 0;
 
         private Dictionary<int, int> itemIndexCache = new();
@@ -210,6 +211,7 @@ namespace auto_whipstacking
                 }
             }
 
+            // ✅ 已更新副鞭切换逻辑：移除 Player.itemAnimation <= 1 限制，恢复旧版灵敏体验
             if (enableSubWhip)
             {
                 var missingBuffs = GetMissingBuffPairs(config);
@@ -223,11 +225,13 @@ namespace auto_whipstacking
                     if (bestSub != null && heldItem.type != bestSub.type)
                     {
                         int index = FindItemIndex(bestSub.type);
-                        if (index >= 0 && Player.itemAnimation <= 1 && Player.itemTime <= 1)
+                        if (index >= 0)
                         {
                             returnFromSubWhipType = heldItem.type;
+                            returnToMainWhipType = heldItem.type; // 同时记录主鞭
                             Player.selectedItem = index;
-                            Player.SetDummyItemTime(1);
+                            if (Player.itemAnimation <= 0 && Player.itemTime <= 0)
+                                Player.SetDummyItemTime(1);
                             isInSubWhipState = true;
                             if (config.LogEnabled)
                                 Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToSubWhip") + bestSub.Name);
@@ -246,8 +250,8 @@ namespace auto_whipstacking
             {
                 if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                 {
-                    int index = FindItemIndex(returnFromSubWhipType);
-                    if (index >= 0)
+                    int index = FindItemIndex(returnToMainWhipType);
+                    if (index >= 0 && config.MainWhips.Any(w => w.Type == returnToMainWhipType))
                     {
                         if (Player.selectedItem != index)
                         {
@@ -265,25 +269,27 @@ namespace auto_whipstacking
                 return;
             }
 
-            if (enableMainWhip && !isInSubWhipState && mainWhipTimer >= config.MainWhipDuration && currentMainWhips.Count > 1)
+            if (enableMainWhip && !isInSubWhipState && mainWhipTimer >= config.MainWhipDuration && currentMainWhips.Count >= 1)
             {
                 if (Player.itemAnimation <= 1 && Player.itemTime <= 1)
                 {
                     mainWhipTimer = 0;
-                    mainWhipIndex = (mainWhipIndex + 1) % currentMainWhips.Count;
-                    var next = currentMainWhips[mainWhipIndex];
 
-                    if (heldItem.type != next.type)
+                    var next = currentMainWhips[mainWhipIndex];
+                    int index = FindItemIndex(next.type);
+
+                    // ✅ 统一处理：即使是同一把主鞭，也刷新使用节奏
+                    if (index >= 0 && Player.selectedItem != index)
                     {
-                        int index = FindItemIndex(next.type);
-                        if (index >= 0)
-                        {
-                            Player.selectedItem = index;
-                            Player.SetDummyItemTime(1);
-                            if (config.LogEnabled)
-                                Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + next.Name);
-                        }
+                        Player.selectedItem = index;
+                        Player.SetDummyItemTime(1);
+                        if (config.LogEnabled)
+                            Main.NewText(Language.GetTextValue("Mods.auto_whipstacking.SwitchToMainWhip") + Player.inventory[index].Name);
                     }
+
+                    // ✅ 主鞭轮换下标递增仅在多鞭时生效
+                    if (currentMainWhips.Count > 1)
+                        mainWhipIndex = (mainWhipIndex + 1) % currentMainWhips.Count;
                 }
             }
 
