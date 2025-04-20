@@ -1,7 +1,7 @@
-Version 2.4.0 has been published to Stable tModLoader v2025.2
+Version 2.4.1 has been published to Stable tModLoader v2025.2
 
-移除了单独开关主鞭轮换的配置项
+修复了副鞭 Buff 齐全后无法马上切换回主鞭的 bug
 
 ----------------------------------------
 
-Removed the separate toggle for main whip rotation in the configuration.
+Fixed a bug where the main whip would not be restored immediately after all sub whip buffs were active
