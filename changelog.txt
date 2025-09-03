@@ -1,7 +1,7 @@
-Version 2.4.1 has been published to Stable tModLoader v2025.2
+Version 2.4.2 has been published to Stable tModLoader v2025.7
 
-修复了副鞭 Buff 齐全后无法马上切换回主鞭的 bug
+加入了小图标
 
-----------------------------------------
+--------------------
 
-Fixed a bug where the main whip would not be restored immediately after all sub whip buffs were active
+Add icon_small
