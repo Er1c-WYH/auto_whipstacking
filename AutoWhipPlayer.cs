@@ -85,7 +85,8 @@ namespace auto_whipstacking
             }
 
             var validDebuffWeapons = config.DebuffWeapons
-                .Where(d => d.Weapon.Type > 0 && Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
+                .Where(d => d != null && d.Weapon != null && d.Weapon.Type > 0)
+                .Where(d => Player.inventory.Any(i => i != null && !i.IsAir && i.type == d.Weapon.Type))
                 .ToList();
 
             if (!validDebuffWeapons.All(d => debuffWeaponTimers.ContainsKey(d.Weapon.Type)))
@@ -152,7 +153,7 @@ namespace auto_whipstacking
             }
 
             bool isMainWhip = config.MainWhips.Any(w => w.Type == heldItem.type);
-            bool isSubWhip = config.WhipBuffPairs.Any(p => p.WhipItem.Type == heldItem.type);
+            bool isSubWhip = GetValidWhipBuffPairs(config).Any(p => p.WhipItem.Type == heldItem.type);
 
             if (!wasAttackingLastFrame)
             {
@@ -307,12 +308,13 @@ namespace auto_whipstacking
 
         private List<WhipBuffPair> GetMissingBuffPairs(AutoWhipConfig config)
         {
-            return config.WhipBuffPairs
+            return GetValidWhipBuffPairs(config)
                 .Where(p => Player.inventory.Any(i => i != null && !i.IsAir && i.type == p.WhipItem.Type))
                 .Where(p =>
                 {
                     if (!Player.HasBuff(p.Buff.Type))
                         return true;
+
                     if (config.UseBuffTimeThreshold)
                     {
                         for (int i = 0; i < Player.buffType.Length; i++)
@@ -323,6 +325,7 @@ namespace auto_whipstacking
                             }
                         }
                     }
+
                     return false;
                 })
                 .ToList();
@@ -350,7 +353,7 @@ namespace auto_whipstacking
                 Player.SetDummyItemTime(1);
                 return;
             }
-            var fallbackSub = config.WhipBuffPairs
+            var fallbackSub = GetValidWhipBuffPairs(config)
                 .Select(p => p.WhipItem.Type)
                 .Distinct()
                 .Select(t => new { Type = t, Index = FindItemIndex(t) })
@@ -367,6 +370,22 @@ namespace auto_whipstacking
             }
             Player.selectedItem = 0;
             Player.SetDummyItemTime(1);
+        }
+
+        private IEnumerable<WhipBuffPair> GetValidWhipBuffPairs(AutoWhipConfig config)
+        {
+            if (config?.WhipBuffPairs == null)
+                yield break;
+
+            foreach (var p in config.WhipBuffPairs)
+            {
+                if (p == null || p.WhipItem == null || p.Buff == null)
+                    continue;
+                if (p.WhipItem.Type <= 0 || p.Buff.Type <= 0)
+                    continue;
+
+                yield return p;
+            }
         }
     }
 }

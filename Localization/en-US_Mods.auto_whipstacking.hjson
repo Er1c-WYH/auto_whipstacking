@@ -99,3 +99,9 @@ RestoreInitialWeapon: Switched back to original weapon
 SwitchToDebuffWeapon: Switched to debuff weapon:
 SwitchToSubWhip: Switched to sub weapon:
 SwitchToMainWhip: Switched to main weapon:
+
+Tooltip: {
+	MainWhip: Main Weapon
+	SubWhip: Sub Weapon
+	DebuffWeapon: Debuff Weapon
+}

@@ -1,7 +1,9 @@
-Version 2.4.2 has been published to Stable tModLoader v2025.7
+Version {modversion} has been published to Stable tModLoader {tmodversion}
 
-加入了小图标
+修复空副武器 / 减益武器 列表导致模组无法运行的问题。
+物品 Tooltip 现在会标记该武器是否在主武器、副武器或减益武器列表中
 
 --------------------
 
-Add icon_small
+Fixed an issue where empty entries in the sub-weapon or debuff-weapon lists could cause the mod to stop functioning.
+Item tooltips now indicate whether a weapon is listed as a main weapon, sub weapon, or debuff weapon.
